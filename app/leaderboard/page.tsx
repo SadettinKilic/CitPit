@@ -15,10 +15,12 @@ interface LeaderboardEntry {
 export default function LeaderboardPage() {
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
-    const currentUser = getCurrentUser();
+    const [currentUser, setCurrentUser] = useState<{ id: number; nick: string } | null>(null);
 
     useEffect(() => {
         fetchLeaderboard();
+        setCurrentUser(getCurrentUser());
+
         // Auto-refresh every 30 seconds
         const interval = setInterval(fetchLeaderboard, 30000);
         return () => clearInterval(interval);
@@ -100,8 +102,8 @@ export default function LeaderboardPage() {
                                             <tr
                                                 key={entry.nick}
                                                 className={`transition-colors ${isCurrentUser
-                                                        ? 'bg-[#F7931A]/10 border-l-4 border-[#F7931A]'
-                                                        : 'hover:bg-white/5'
+                                                    ? 'bg-[#F7931A]/10 border-l-4 border-[#F7931A]'
+                                                    : 'hover:bg-white/5'
                                                     }`}
                                             >
                                                 <td className="px-6 py-4 text-sm font-mono text-white">

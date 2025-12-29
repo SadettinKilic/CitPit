@@ -39,14 +39,15 @@ const db = new Dexie('FinFlowDB') as Dexie & {
     transactions: EntityTable<Transaction, 'id'>;
     assets: EntityTable<Asset, 'id'>;
     users: EntityTable<User, 'id'>;
-    settings: EntityTable<Setting, 'id'>; 
+    settings: EntityTable<Setting, 'id'>;
+};
 
 db.version(2).stores({
-        transactions: '++id, type, category, amount, date, userId',
-        assets: '++id, assetType, quantity, buyPrice, date, userId',
-        users: '++id, &nick, pin, createdAt',
-        settings: '++id'
-    });
+    transactions: '++id, type, category, amount, date, userId',
+    assets: '++id, assetType, quantity, buyPrice, date, userId',
+    users: '++id, &nick, pin, createdAt',
+    settings: '++id'
+});
 
 db.version(1).stores({
     transactions: '++id, type, category, amount, date, note',

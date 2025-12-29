@@ -68,14 +68,18 @@ export async function loginUser(nick: string, pin: string): Promise<{ success: b
 
 // Set current user in session
 function setCurrentUser(user: User) {
-    sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
-        id: user.id,
-        nick: user.nick,
-    }));
+    if (typeof window !== 'undefined') {
+        sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
+            id: user.id,
+            nick: user.nick,
+        }));
+    }
 }
 
 // Get current user
 export function getCurrentUser(): { id: number; nick: string } | null {
+    if (typeof window === 'undefined') return null;
+
     const stored = sessionStorage.getItem(CURRENT_USER_KEY);
     if (!stored) return null;
 
@@ -94,9 +98,11 @@ export function getCurrentUserId(): number | null {
 
 // Logout user
 export function logoutUser() {
-    sessionStorage.removeItem(CURRENT_USER_KEY);
-    sessionStorage.removeItem('finflow_unlocked');
-    window.location.reload();
+    if (typeof window !== 'undefined') {
+        sessionStorage.removeItem(CURRENT_USER_KEY);
+        sessionStorage.removeItem('finflow_unlocked');
+        window.location.reload();
+    }
 }
 
 // Check if user exists
