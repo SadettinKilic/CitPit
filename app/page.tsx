@@ -21,6 +21,7 @@ export default function Home() {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpense, setMonthlyExpense] = useState(0);
   const [totalAsset, setTotalAsset] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadStats();
@@ -47,6 +48,7 @@ export default function Home() {
     setMonthlyIncome(income);
     setMonthlyExpense(expense);
     setTotalAsset(asset);
+    setLoading(false);
 
     // Submit to leaderboard (fire and forget)
     try {
