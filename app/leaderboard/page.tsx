@@ -104,14 +104,14 @@ export default function LeaderboardPage() {
                             <table className="w-full">
                                 <thead className="bg-black/30">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-mono text-[#94A3B8] uppercase tracking-wider">
+                                        <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-mono text-[#94A3B8] uppercase tracking-wider">
                                             Sıra
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-mono text-[#94A3B8] uppercase tracking-wider">
+                                        <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-mono text-[#94A3B8] uppercase tracking-wider">
                                             Kullanıcı
                                         </th>
-                                        <th className="px-6 py-4 text-right text-sm font-mono text-[#94A3B8] uppercase tracking-wider">
-                                            Toplam Kar
+                                        <th className="px-3 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-mono text-[#94A3B8] uppercase tracking-wider">
+                                            Kar
                                         </th>
                                     </tr>
                                 </thead>
@@ -124,29 +124,29 @@ export default function LeaderboardPage() {
                                             <tr
                                                 key={entry.nick}
                                                 className={`transition-colors ${isCurrentUser
-                                                    ? 'bg-[#F7931A]/10 border-l-4 border-[#F7931A]'
+                                                    ? 'bg-[#F7931A]/10 border-l-2 md:border-l-4 border-[#F7931A]'
                                                     : 'hover:bg-white/5'
                                                     }`}
                                             >
-                                                <td className="px-6 py-4 text-sm font-mono text-white">
-                                                    <div className="flex items-center gap-2">
-                                                        {rankIcon && <span className="text-2xl">{rankIcon}</span>}
+                                                <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-mono text-white">
+                                                    <div className="flex items-center gap-1 md:gap-2">
+                                                        {rankIcon && <span className="text-lg md:text-2xl">{rankIcon}</span>}
                                                         <span className="font-bold">#{entry.rank}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-sm font-body text-white">
+                                                <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-body text-white">
                                                     <div className="flex items-center gap-2">
-                                                        <span className={isCurrentUser ? 'font-bold text-[#F7931A]' : ''}>
+                                                        <span className={`truncate max-w-[100px] md:max-w-none ${isCurrentUser ? 'font-bold text-[#F7931A]' : ''}`}>
                                                             {entry.nick}
                                                         </span>
                                                         {isCurrentUser && (
-                                                            <span className="px-2 py-1 rounded-full text-xs bg-[#F7931A]/20 text-[#F7931A] border border-[#F7931A]/50">
+                                                            <span className="hidden md:inline px-2 py-1 rounded-full text-xs bg-[#F7931A]/20 text-[#F7931A] border border-[#F7931A]/50">
                                                                 SİZ
                                                             </span>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className={`px-6 py-4 text-sm font-mono text-right font-bold ${entry.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'
+                                                <td className={`px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-mono text-right font-bold ${entry.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'
                                                     }`}>
                                                     {entry.totalProfit >= 0 ? '+' : ''}{formatCurrency(entry.totalProfit)}
                                                 </td>
