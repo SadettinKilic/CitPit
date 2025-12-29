@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: Request) {
     try {
@@ -20,27 +21,14 @@ export async function POST(request: Request) {
     Örnek format: "Şu anki piyasada X TL ile Y alabilirsin çünkü Z."
     Yatırım tavsiyesi değildir uyarısı ekleme, sadece dostane bir öneri sun. Çok kısa tut (max 2-3 cümle).`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: prompt }]
-                }]
-            })
-        });
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Gemini API Error (Advice):', response.status, errorText);
-            throw new Error(`Gemini API Failed: ${response.status}`);
-        }
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-        const data = await response.json();
-        console.log('Gemini Advice Response:', JSON.stringify(data));
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Tavsiye oluşturulamadı.';
+        console.log('Gemini Advice Response:', text);
 
         return NextResponse.json({
             success: true,
@@ -53,5 +41,12 @@ export async function POST(request: Request) {
             { success: false, error: 'Failed to generate advice' },
             { status: 500 }
         );
+    }
+}
+console.error('Advice error:', error);
+return NextResponse.json(
+    { success: false, error: 'Failed to generate advice' },
+    { status: 500 }
+);
     }
 }
