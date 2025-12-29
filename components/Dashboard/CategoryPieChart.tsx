@@ -48,7 +48,7 @@ export function CategoryPieChart() {
                         cy="50%"
                         outerRadius={100}
                         labelLine={false}
-                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                        label={({ cx, cy, midAngle = 0, innerRadius, outerRadius, percent = 0 }) => {
                             const RADIAN = Math.PI / 180;
                             const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                             const x = cx + radius * Math.cos(-midAngle * RADIAN);
