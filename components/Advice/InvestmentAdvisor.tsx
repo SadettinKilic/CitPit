@@ -71,10 +71,10 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
                             <Sparkles size={22} className="group-hover:animate-pulse-slow" />
                         </div>
                         <div className="flex-1 min-w-0 text-left">
-                            <h3 className="font-heading font-semibold text-white group-hover:text-indigo-300 transition-colors truncate">
+                            <h3 className="font-heading font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm md:text-base leading-tight">
                                 Yapay Zeka
                             </h3>
-                            <p className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors truncate">
+                            <p className="text-[10px] md:text-xs text-gray-400 group-hover:text-gray-300 transition-colors leading-tight mt-0.5">
                                 Yatırım Asistanı
                             </p>
                         </div>
