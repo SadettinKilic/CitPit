@@ -8,7 +8,11 @@ export async function POST(request: Request) {
         console.log('Advice Request:', { balance, date, goal, hasPrices: !!prices });
 
         if (!apiKey) {
-            // ... (keep existing demo fallback)
+            console.error('Missing GEMINI_API_KEY for Advice');
+            return NextResponse.json({
+                success: true,
+                advice: `(Demo Modu) Bakiye: ${balance} TL. Hedef: ${goal?.description || 'Genel'}. Piyasalar hareketli, sepet yapmayı unutmayın.`
+            });
         }
 
         // Market Context Construction
@@ -23,7 +27,20 @@ export async function POST(request: Request) {
             `;
         }
 
-        // ... (keep goal context)
+        // Goal context
+        let goalPrompt = '';
+        if (goal && goal.type !== 'none') {
+            goalPrompt = `
+            KULLANICI HEDEFİ:
+            - Hedef: ${goal.description}
+            - Hedeflenen Tutar: ${goal.amount} TL
+            - Mevcut Durum: Kullanıcının varlıkları bu hedefe ulaşmak için nasıl değerlendirilmeli?
+            
+            Lütfen tavsiyeni BU HEDEFE ULAŞMAYA ODAKLI ver. Sadece altın/gümüş değil, sepet yaparak (Döviz, Altın Tipleri, Mevduat vb.) bu hedefe en hızlı ve güvenli nasıl ulaşır anlat.
+            `;
+        } else {
+            goalPrompt = 'Kullanıcının henüz özel bir hedefi yok. Genel varlık arttırma stratejileri öner.';
+        }
 
         const prompt = `
         Sen FinFlow uygulamasının yatırım asistanısın.
