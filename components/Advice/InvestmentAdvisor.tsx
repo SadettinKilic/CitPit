@@ -83,7 +83,7 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
 
             <Button
                 variant="ghost"
-                size="sm"
+
                 onClick={getAdvice}
                 disabled={loading}
                 className="mt-3 w-full text-xs text-[#94A3B8] hover:text-white flex items-center justify-center gap-1"
