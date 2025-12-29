@@ -24,6 +24,10 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
         setError('');
 
         try {
+            // Get goal data
+            const savedGoal = localStorage.getItem('finflow_goal');
+            const goal = savedGoal ? JSON.parse(savedGoal) : null;
+
             const response = await fetch('/api/advice', {
                 method: 'POST',
                 headers: {
@@ -31,6 +35,7 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
                 },
                 body: JSON.stringify({
                     balance,
+                    goal,
                     date: new Date().toLocaleDateString('tr-TR'),
                 }),
             });

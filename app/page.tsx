@@ -10,8 +10,10 @@ import {
   calculateBalance,
   calculateMonthlyIncome,
   calculateMonthlyExpense,
-  calculateTotalAssetValue
+  calculateTotalAssetValue,
+  calculateTotalProfit
 } from '@/lib/calculations';
+import { getCurrentUser } from '@/lib/auth';
 import { Wallet, TrendingUp, TrendingDown, Coins } from 'lucide-react';
 
 export default function Home() {
@@ -45,6 +47,22 @@ export default function Home() {
     setMonthlyIncome(income);
     setMonthlyExpense(expense);
     setTotalAsset(asset);
+
+    // Submit to leaderboard (fire and forget)
+    try {
+      const profit = await calculateTotalProfit();
+      const user = getCurrentUser();
+
+      if (user) {
+        fetch('/api/leaderboard/submit', {
+          method: 'POST',
+          body: JSON.stringify({ nick: user.nick, totalProfit: profit }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    } catch (e) {
+      console.error('Leaderboard submit failed', e);
+    }
   };
 
   const formatCurrency = (amount: number) => {

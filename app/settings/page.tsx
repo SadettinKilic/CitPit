@@ -2,6 +2,7 @@ import React from 'react';
 import { AppLayout } from '@/components/AppLayout';
 import { APIStatus } from '@/components/Settings/APIStatus';
 import { ExportImport } from '@/components/DataManagement/ExportImport';
+import { InvestmentGoal } from '@/components/Settings/InvestmentGoal';
 
 export default function SettingsPage() {
     return (
@@ -17,7 +18,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <APIStatus />
+                    <div className="space-y-6">
+                        <InvestmentGoal />
+                        <APIStatus />
+                    </div>
                     <ExportImport />
                 </div>
             </div>

@@ -1,18 +1,20 @@
-'use client';
-
 import React from 'react';
 import { Card } from '../ui/Card';
 import { LucideIcon } from 'lucide-react';
+import { Skeleton } from '../ui/Skeleton';
+import { CountUp } from '../ui/CountUp';
 
 interface StatCardProps {
     title: string;
-    value: string;
+    value: number; // Changed to number for CountUp
     icon: LucideIcon;
     trend?: string;
     trendUp?: boolean;
+    loading?: boolean;
+    prefix?: string;
 }
 
-export function StatCard({ title, value, icon: Icon, trend, trendUp }: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, trend, trendUp, loading, prefix = '' }: StatCardProps) {
     return (
         <Card className="relative overflow-hidden">
             {/* Background Icon Watermark */}
@@ -30,13 +32,19 @@ export function StatCard({ title, value, icon: Icon, trend, trendUp }: StatCardP
                     </h3>
                 </div>
 
-                <div className="mb-2">
-                    <p className="text-3xl font-mono font-bold text-white">
-                        {value}
-                    </p>
+                <div className="mb-2 min-h-[36px]">
+                    {loading ? (
+                        <Skeleton className="h-9 w-32" />
+                    ) : (
+                        <p className="text-3xl font-mono font-bold text-white">
+                            <CountUp end={value} prefix={prefix} />
+                        </p>
+                    )}
                 </div>
 
-                {trend && (
+                {loading ? (
+                    <Skeleton className="h-4 w-20 mt-1" />
+                ) : trend && (
                     <p className={`text-sm font-body ${trendUp ? 'text-green-400' : 'text-red-400'}`}>
                         {trendUp ? '↑' : '↓'} {trend}
                     </p>
