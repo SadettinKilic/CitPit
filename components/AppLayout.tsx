@@ -25,7 +25,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         // Store unlock state in sessionStorage (cleared when browser tab closes)
         sessionStorage.setItem('finflow_unlocked', 'true');
         // Fetch prices immediately on unlock
+        // Fetch prices immediately on unlock
         fetchPrices();
+        // Dispatch unlock event for other components to reload data
+        window.dispatchEvent(new Event('finflow_unlock'));
     };
 
     if (isLoading) {

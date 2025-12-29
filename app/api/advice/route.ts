@@ -4,8 +4,10 @@ export async function POST(request: Request) {
     try {
         const { balance, date } = await request.json();
         const apiKey = process.env.GEMINI_API_KEY;
+        console.log('Advice Request:', { balance, date, hasApiKey: !!apiKey });
 
         if (!apiKey) {
+            console.error('Missing GEMINI_API_KEY for Advice');
             // Mock response if API key is missing (fallback)
             return NextResponse.json({
                 success: true,
@@ -30,7 +32,14 @@ export async function POST(request: Request) {
             })
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Gemini API Error (Advice):', response.status, errorText);
+            throw new Error(`Gemini API Failed: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Gemini Advice Response:', JSON.stringify(data));
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Tavsiye oluşturulamadı.';
 
         return NextResponse.json({

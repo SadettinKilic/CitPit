@@ -25,6 +25,7 @@ export interface Asset {
         year?: number;
         km?: number;
         m2?: number;
+        roomCount?: string; // 1+1, 2+1, etc.
         location?: string;
     };
 }

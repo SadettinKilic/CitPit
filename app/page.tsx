@@ -23,11 +23,16 @@ export default function Home() {
   useEffect(() => {
     loadStats();
 
-    // Refresh data when window gains focus
-    const handleFocus = () => loadStats();
-    window.addEventListener('focus', handleFocus);
+    // Refresh data when window gains focus or unlocked
+    const handleRefresh = () => loadStats();
 
-    return () => window.removeEventListener('focus', handleFocus);
+    window.addEventListener('focus', handleRefresh);
+    window.addEventListener('finflow_unlock', handleRefresh);
+
+    return () => {
+      window.removeEventListener('focus', handleRefresh);
+      window.removeEventListener('finflow_unlock', handleRefresh);
+    };
   }, []);
 
   const loadStats = async () => {

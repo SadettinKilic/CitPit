@@ -29,6 +29,7 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
     const [year, setYear] = useState('');
     const [km, setKm] = useState('');
     const [m2, setM2] = useState('');
+    const [roomCount, setRoomCount] = useState('2+1');
     const [location, setLocation] = useState('');
 
     useEffect(() => {
@@ -57,7 +58,10 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     type: assetType,
-                    details: { brand, model, year: parseInt(year), km: parseInt(km), m2: parseInt(m2), location }
+                    details: {
+                        brand, model, year: parseInt(year), km: parseInt(km),
+                        m2: parseInt(m2), location, roomCount
+                    }
                 })
             });
             const data = await response.json();
@@ -92,7 +96,11 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
                 details.model = model;
                 details.year = parseInt(year);
                 details.km = parseInt(km);
-            } else if (assetType === 'home' || assetType === 'land') {
+            } else if (assetType === 'home') {
+                details.location = location;
+                details.m2 = parseInt(m2);
+                details.roomCount = roomCount;
+            } else if (assetType === 'land') {
                 details.location = location;
                 details.m2 = parseInt(m2);
             }
@@ -110,7 +118,7 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
             setAssetType('gold_gram');
             setQuantity('');
             setBuyPrice('');
-            setBrand(''); setModel(''); setYear(''); setKm(''); setM2(''); setLocation('');
+            setBrand(''); setModel(''); setYear(''); setKm(''); setM2(''); setLocation(''); setRoomCount('2+1');
             setDate(new Date().toISOString().split('T')[0]);
 
             onSuccess();
@@ -158,7 +166,23 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
                 {(assetType === 'home' || assetType === 'land') && (
                     <div className="grid grid-cols-2 gap-3">
                         <Input label="Konum (İl/İlçe)" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="İstanbul, Kadıköy" required className="col-span-2" />
-                        <Input label="Büyüklük (m²)" type="number" value={m2} onChange={(e) => setM2(e.target.value)} placeholder="100" required className="col-span-2" />
+                        <Input label="Büyüklük (m²)" type="number" value={m2} onChange={(e) => setM2(e.target.value)} placeholder="100" required className={assetType === 'home' ? '' : 'col-span-2'} />
+                        {assetType === 'home' && (
+                            <Select
+                                label="Oda Sayısı"
+                                value={roomCount}
+                                onChange={(e) => setRoomCount(e.target.value)}
+                                options={[
+                                    { value: '1+0', label: '1+0' },
+                                    { value: '1+1', label: '1+1' },
+                                    { value: '2+1', label: '2+1' },
+                                    { value: '3+1', label: '3+1' },
+                                    { value: '4+1', label: '4+1' },
+                                    { value: '5+1', label: '5+1' },
+                                    { value: 'Villa', label: 'Villa' },
+                                ]}
+                            />
+                        )}
                     </div>
                 )}
 

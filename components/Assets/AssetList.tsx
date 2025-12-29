@@ -133,7 +133,8 @@ export function AssetList({ refresh }: AssetListProps) {
                                             {asset.details && (
                                                 <span className="text-xs text-[#94A3B8] font-mono mt-0.5">
                                                     {asset.assetType === 'car' && `${asset.details.brand} ${asset.details.model} (${asset.details.year})`}
-                                                    {(asset.assetType === 'home' || asset.assetType === 'land') && `${asset.details.location} (${asset.details.m2}m²)`}
+                                                    {asset.assetType === 'home' && `${asset.details.location}, ${asset.details.roomCount} (${asset.details.m2}m²)`}
+                                                    {asset.assetType === 'land' && `${asset.details.location} (${asset.details.m2}m²)`}
                                                 </span>
                                             )}
                                             <span className="text-xs text-[#94A3B8]/60 font-mono">
