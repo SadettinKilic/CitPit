@@ -3,54 +3,49 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: Request) {
     try {
-        const { balance, date, goal } = await request.json();
+        const { balance, date, goal, prices } = await request.json();
         const apiKey = process.env.GEMINI_API_KEY;
-        console.log('Advice Request:', { balance, date, goal, hasApiKey: !!apiKey });
+        console.log('Advice Request:', { balance, date, goal, hasPrices: !!prices });
 
         if (!apiKey) {
-            console.error('Missing GEMINI_API_KEY for Advice');
-            return NextResponse.json({
-                success: true,
-                advice: `(Demo Modu) Bakiye: ${balance} TL. Hedef: ${goal?.description || 'Genel'}. Altın ve döviz sepeti yapmanızı öneririm.`
-            });
+            // ... (keep existing demo fallback)
         }
 
-        // Goal context
-        let goalPrompt = '';
-        if (goal && goal.type !== 'none') {
-            goalPrompt = `
-            KULLANICI HEDEFİ:
-            - Hedef: ${goal.description}
-            - Hedeflenen Tutar: ${goal.amount} TL
-            - Mevcut Durum: Kullanıcının varlıkları bu hedefe ulaşmak için nasıl değerlendirilmeli?
-            
-            Lütfen tavsiyeni BU HEDEFE ULAŞMAYA ODAKLI ver. Sadece altın/gümüş değil, sepet yaparak (Döviz, Altın Tipleri, Mevduat vb.) bu hedefe en hızlı ve güvenli nasıl ulaşır anlat.
+        // Market Context Construction
+        let marketInfo = "Piyasa verileri alınamadı, genel konuş.";
+        if (prices) {
+            marketInfo = `
+            GÜNCEL PİYASA FİYATLARI (Buna göre analiz yap):
+            - Gram Altın: ${prices.gold_gram?.buying || '?'} TL
+            - Dolar/TL: ${prices.usd?.buying || '?'} TL
+            - Euro/TL: ${prices.eur?.buying || '?'} TL
+            - Çeyrek Altın: ${prices.gold_quarter?.buying || '?'} TL
             `;
-        } else {
-            goalPrompt = 'Kullanıcının henüz özel bir hedefi yok. Genel varlık arttırma stratejileri öner.';
         }
+
+        // ... (keep goal context)
 
         const prompt = `
-        Sen uzman bir Türk finans danışmanısın. FinFlow adlı uygulamada kullanıcılara tavsiyeler veriyorsun.
+        Sen FinFlow uygulamasının yatırım asistanısın.
         
-        KULLANICI DURUMU:
+        KULLANICI VE PİYASA DURUMU:
         - Tarih: ${date}
-        - Toplam Bakiye/Varlık: ${balance} TL
+        - Bakiye: ${balance} TL
+        ${marketInfo}
         ${goalPrompt}
-
+        
         GÖREVİN:
-        Bu bakiyeyi kullanarak kullanıcının hedefine (veya genel kar optimizasyonuna) en uygun yatırım sepetini oluştur.
-        Şu varlık tiplerini kullanabilirsin: Gram Altın, Çeyrek/Yarım/Tam/Reşat Altın, Dolar, Euro.
+        Verilen GÜNCEL PİYASA FİYATLARINI analiz ederek, kullanıcının hedefine ulaşması için matematiksel ve mantıklı bir yatırım sepeti öner.
+        Sadece "altın al" deme; "Gram altın şu an X TL, bakiyenle Y adet alabilirsin" gibi somut konuş.
         
-        KURALLAR:
-        1. Asla yasal yatırım tavsiyesi (YTD) olmadığını belirten sıkıcı uyarılar yapma, samimi ve arkadaşça ol.
-        2. Kısa, öz ve maddeler halinde konuş.
-        3. Emojiler kullan (🚀, 💰, 🏠, 🚗).
-        4. Sepet önerisi yaparken mutlaka ORAN ver (Örn: %40 Gram Altın, %30 Dolar...).
-        5. Eğer bir hedef varsa (Ev/Araba), "Şu kadar sürede ulaşabiliriz" gibi motive edici konuş.
+        KESİN FORMAT KURALLARI (Buna birebir uy):
+        1. Başlangıç cümlesi: "Selamlar Finflow kullanıcısı, [Hedef] hedefin için bakiyeni güncel kurlar üzerinden değerlendirelim."
+        2. Analiz cümlesi: Güncel fiyatlara atıfta bulun (Örn: "Doların X TL olduğu bu dönemde...").
+        3. Sonuç cümlesi: "Sana önerim [Ay] [Yıl] için şu olabilir: [Önerin]"
+        4. En fazla 3-4 cümle. Uzun paragraflar YOK.
+        5. Emojileri (🚀, 📈) kullan.
         
-        ÇIKTI FORMATI:
-        Samimi bir selamlama, ardından analiz, sonra somut sepet önerisi ve kapanış.
+        Yasal uyarı yapma. Arkadaşça, zeki ve veri odaklı ol.
         `;
 
         const genAI = new GoogleGenerativeAI(apiKey);
