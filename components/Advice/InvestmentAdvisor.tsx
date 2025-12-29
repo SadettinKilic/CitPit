@@ -1,132 +1,129 @@
-import { Modal } from '../ui/Modal';
+import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { getPrices } from '@/lib/api';
+import { Modal } from '@/components/ui/Modal';
 
-// ... (clean up imports, remove clutter)
+interface InvestmentAdvisorProps {
+    balance: number;
+}
 
 export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
     const [advice, setAdvice] = useState<string>('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+    const [error, setError] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Initial load
+    useEffect(() => {
+        const cached = sessionStorage.getItem('finflow_advice');
+        if (cached) {
+            setAdvice(cached);
+        }
+    }, []);
 
     const getAdvice = async (forceRefresh = false) => {
-        if (!isModalOpen && !forceRefresh) {
-            // First open, just show modal if we have cached advice
-            const cached = sessionStorage.getItem('finflow_advice');
-            if (cached) {
-                setAdvice(cached);
-                setIsModalOpen(true);
-                return;
-            }
-        }
-
-        if (balance <= 0) {
-            setAdvice('Yatırım tavsiyesi almak için önce bakiyenizi artırmalısınız.');
-            setIsModalOpen(true);
-            return;
-        }
-
-        setIsModalOpen(true); // Open immediately to show loading state
         setLoading(true);
-        setError('');
-
+        setError(null);
         try {
-            // Get goal data
-            const savedGoal = localStorage.getItem('finflow_goal');
-            const goal = savedGoal ? JSON.parse(savedGoal) : null;
-
-            // Get current market prices
             const prices = await getPrices();
-
-            const response = await fetch('/api/advice', {
+            const res = await fetch('/api/advice', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     balance,
-                    goal,
-                    prices,
-                    date: new Date().toLocaleDateString('tr-TR'),
+                    goal: localStorage.getItem('finflow_goal') || 'balanced',
+                    prices // Send real-time prices to AI
                 }),
+                headers: { 'Content-Type': 'application/json' }
             });
 
-            const data = await response.json();
-
-            if (data.success) {
-                setAdvice(data.advice);
-                sessionStorage.setItem('finflow_advice', data.advice);
-            } else {
-                setError(data.error || 'Tavsiye alınamadı. API anahtarı eksik olabilir.');
+            if (!res.ok) {
+                if (res.status === 429) throw new Error('Çok fazla istek, lütfen bekleyin');
+                throw new Error('Tavsiye alınamadı');
             }
+
+            const data = await res.json();
+            setAdvice(data.advice);
+            sessionStorage.setItem('finflow_advice', data.advice);
         } catch (err) {
-            setError('Bir hata oluştu.');
+            setError(err instanceof Error ? err.message : 'Bir hata oluştu');
         } finally {
             setLoading(false);
         }
     };
 
+    const handleOpen = () => {
+        setIsModalOpen(true);
+        if (!advice && !loading) {
+            getAdvice();
+        }
+    };
+
     return (
         <>
-            {/* Sidebar Trigger Card */}
-            <Card
-                className="mt-6 bg-gradient-to-br from-[#0F1115] to-[#1a1a1a] border-[#F7931A]/20 cursor-pointer hover:border-[#F7931A]/50 transition-colors group"
-                onClick={() => getAdvice(false)}
-            >
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-[#F7931A]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Sparkles size={20} className="text-[#F7931A]" />
+            {/* Trigger Card */}
+            <div onClick={handleOpen} className="cursor-pointer group">
+                <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20 hover:border-indigo-500/40 transition-all duration-300">
+                    <div className="flex items-center gap-4 p-4">
+                        <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform duration-300">
+                            <Sparkles size={24} />
+                        </div>
+                        <div>
+                            <h3 className="font-heading font-semibold text-white group-hover:text-indigo-300 transition-colors">
+                                Yapay Zeka Tavsiyesi
+                            </h3>
+                            <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+                                Portföyünüz için akıllı öneriler almak için tıklayın
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="text-sm font-heading font-bold text-white">Yatırım Asistanı</h3>
-                        <p className="text-xs text-[#94A3B8] group-hover:text-white transition-colors">
-                            Tavsiye almak için tıkla
-                        </p>
-                    </div>
-                </div>
-            </Card>
+                </Card>
+            </div>
 
-            {/* Detailed Advice Modal */}
+            {/* Detailed Modal */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                title="Yapay Zeka Yatırım Tavsiyesi"
+                title="Yapay Zeka Yatırım Danışmanı"
             >
-                <div className="space-y-4">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                            <div className="relative">
-                                <div className="w-12 h-12 rounded-full border-2 border-[#F7931A]/20 border-t-[#F7931A] animate-spin"></div>
-                                <Sparkles size={20} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#F7931A]" />
-                            </div>
-                            <p className="text-sm text-[#94A3B8] animate-pulse">Piyasalar analiz ediliyor...</p>
+                <div className="space-y-6">
+                    {error ? (
+                        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400">
+                            <AlertCircle size={20} />
+                            <p>{error}</p>
                         </div>
-                    ) : error ? (
-                        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400 text-sm">
-                            {error}
+                    ) : null}
+
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full animate-pulse" />
+                                <Sparkles className="relative z-10 text-indigo-400 animate-spin-slow" size={48} />
+                            </div>
+                            <p className="text-gray-400 animate-pulse">Piyasa verileri analiz ediliyor...</p>
                         </div>
                     ) : (
-                        <div className="bg-[#030304] rounded-lg p-4 border border-gray-800">
-                            <div className="prose prose-invert prose-sm max-w-none">
-                                <p className="leading-relaxed whitespace-pre-line text-gray-300">
-                                    {advice}
-                                </p>
+                        <div className="prose prose-invert max-w-none">
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10 shadow-inner">
+                                <div className="flex items-start gap-4">
+                                    <Sparkles className="text-indigo-400 shrink-0 mt-1" size={20} />
+                                    <p className="text-lg leading-relaxed text-gray-200 whitespace-pre-wrap">
+                                        {advice || 'Tavsiye oluşturuluyor...'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-2 pt-2">
-                        <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
-                            Kapat
-                        </Button>
+                    <div className="flex justify-end pt-4 border-t border-white/10">
                         <Button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                getAdvice(true);
-                            }}
+                            onClick={() => getAdvice(true)}
                             disabled={loading}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 px-6"
                         >
-                            <RefreshCw size={16} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
-                            Yeniden Analiz Et
+                            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+                            {loading ? 'Analiz Ediliyor' : 'Yeniden Analiz Et'}
                         </Button>
                     </div>
                 </div>

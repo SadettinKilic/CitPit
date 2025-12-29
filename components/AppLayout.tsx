@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { PINScreen } from './PINScreen';
 import { fetchPrices } from '@/lib/api';
+import { BottomNavigation } from './BottomNavigation';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const [isUnlocked, setIsUnlocked] = useState(false);
@@ -44,12 +45,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         return <PINScreen onUnlock={handleUnlock} />;
     }
 
+    // ... (inside return)
     return (
         <div className="flex min-h-screen bg-[#030304]">
             <Sidebar />
-            <main className="flex-1 ml-64 p-8">
+            <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 transition-all duration-300">
                 {children}
             </main>
+            <BottomNavigation />
         </div>
     );
 }

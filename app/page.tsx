@@ -10,13 +10,14 @@ import {
   calculateBalance,
   calculateMonthlyIncome,
   calculateMonthlyExpense,
+  calculateTotalProfit,
   calculateTotalAssetValue,
-  calculateTotalProfit
 } from '@/lib/calculations';
+import { InvestmentAdvisor } from '@/components/Advice/InvestmentAdvisor';
+import { Coins, TrendingDown, TrendingUp, Wallet } from 'lucide-react';
 import { getCurrentUser } from '@/lib/auth';
-import { Wallet, TrendingUp, TrendingDown, Coins } from 'lucide-react';
 
-export default function Home() {
+export default function Dashboard() {
   const [balance, setBalance] = useState(0);
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpense, setMonthlyExpense] = useState(0);
@@ -78,20 +79,27 @@ export default function Home() {
 
   return (
     <AppLayout>
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-heading font-bold mb-2">
-            <span className="text-white">Hoş Geldiniz,</span>{' '}
-            <span className="gradient-text">FinFlow</span>
-          </h1>
-          <p className="text-[#94A3B8] font-body">
-            Kişisel finans ve varlıklarınızın özeti
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">
+              <span className="text-white">Hoş Geldiniz,</span>{' '}
+              <span className="gradient-text">FinFlow</span>
+            </h1>
+            <p className="text-[#94A3B8] font-body text-sm md:text-base">
+              Kişisel finans ve varlıklarınızın özeti
+            </p>
+          </div>
+
+          {/* Mobile Advisor */}
+          <div className="md:hidden w-full">
+            <InvestmentAdvisor balance={totalAsset} />
+          </div>
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           <StatCard
             title="Toplam Varlık"
             value={totalAsset}
