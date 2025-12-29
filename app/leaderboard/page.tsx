@@ -1,16 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { AppLayout } from '@/components/AppLayout';
-import { Card } from '@/components/ui/Card';
-import { getCurrentUser } from '@/lib/auth';
+import { Button } from '@/components/ui/Button';
+import { RefreshCw } from 'lucide-react';
 
-interface LeaderboardEntry {
-    rank: number;
-    nick: string;
-    totalProfit: number;
-    lastUpdate: string;
-}
+// ... (imports)
 
 export default function LeaderboardPage() {
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -18,33 +11,34 @@ export default function LeaderboardPage() {
     const [currentUser, setCurrentUser] = useState<{ id: number; nick: string } | null>(null);
 
     useEffect(() => {
-        fetchLeaderboard();
         setCurrentUser(getCurrentUser());
 
-        // Auto-refresh every 30 seconds
-        const interval = setInterval(fetchLeaderboard, 30000);
-        return () => clearInterval(interval);
+        // Check cache first
+        const cachedData = sessionStorage.getItem('finflow_leaderboard');
+        if (cachedData) {
+            setLeaderboard(JSON.parse(cachedData));
+            setLoading(false);
+        } else {
+            fetchLeaderboard();
+        }
     }, []);
 
     const fetchLeaderboard = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('/api/leaderboard/get');
+            const response = await fetch('/api/leaderboard/get', {
+                cache: 'no-store'
+            });
             const data = await response.json();
-            setLeaderboard(data.leaderboard || []);
+            const list = data.leaderboard || [];
+
+            setLeaderboard(list);
+            sessionStorage.setItem('finflow_leaderboard', JSON.stringify(list));
         } catch (error) {
             console.error('Failed to fetch leaderboard:', error);
         } finally {
             setLoading(false);
         }
-    };
-
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('tr-TR', {
-            style: 'currency',
-            currency: 'TRY',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(amount);
     };
 
     const getRankIcon = (rank: number) => {
@@ -57,13 +51,23 @@ export default function LeaderboardPage() {
     return (
         <AppLayout>
             <div className="space-y-6">
-                <div>
-                    <h1 className="text-4xl font-heading font-bold gradient-text mb-2">
-                        Leaderboard
-                    </h1>
-                    <p className="text-[#94A3B8] font-body">
-                        En Başarılı FinFlow Yatırımcıları
-                    </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-heading font-bold gradient-text mb-2">
+                            Leaderboard
+                        </h1>
+                        <p className="text-[#94A3B8] font-body">
+                            En Başarılı FinFlow Yatırımcıları
+                        </p>
+                    </div>
+                    <Button
+                        variant="outline"
+                        onClick={fetchLeaderboard}
+                        disabled={loading}
+                        className="!p-3"
+                    >
+                        <RefreshCw size={20} className={loading ? 'animate-spin text-[#F7931A]' : ''} />
+                    </Button>
                 </div>
 
                 {loading ? (
@@ -138,7 +142,7 @@ export default function LeaderboardPage() {
                 )}
 
                 <p className="text-xs text-[#94A3B8] text-center font-body">
-                    Liderlik tablosu her 30 saniyede bir otomatik güncellenir
+                    Sıralama anlık güncellenir
                 </p>
             </div>
         </AppLayout>

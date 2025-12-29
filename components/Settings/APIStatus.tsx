@@ -83,7 +83,7 @@ export function APIStatus() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h3 className="text-xl font-heading font-semibold text-white mb-1">
-                                API Fiyat Durumu
+                                Canlı Piyasa Verileri
                             </h3>
                             <div className="flex items-center gap-2">
                                 {prices && (
@@ -110,7 +110,14 @@ export function APIStatus() {
                     </div>
 
                     {!prices ? (
-                        <p className="text-center py-8 text-[#94A3B8] font-body">Veriler yükleniyor...</p>
+                        loading ? (
+                            <p className="text-center py-8 text-[#94A3B8] font-body">Veriler yükleniyor...</p>
+                        ) : (
+                            <div className="text-center py-6">
+                                <p className="text-red-400 mb-2">Veri alınamadı</p>
+                                <Button onClick={handleRefresh} variant="outline" size="sm">Tekrar Dene</Button>
+                            </div>
+                        )
                     ) : (
                         <div className="space-y-2">
                             {assetTypes.map((type) => {
