@@ -42,7 +42,13 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 // Fetch prices from API
 export async function fetchPrices(): Promise<AllPrices | null> {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}?t=${Date.now()}`, {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+            }
+        });
         if (!response.ok) {
             throw new Error('API request failed');
         }

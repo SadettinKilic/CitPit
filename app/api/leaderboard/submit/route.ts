@@ -1,40 +1,5 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const DATA_FILE = path.join(process.cwd(), 'data', 'leaderboard.json');
-
-interface LeaderboardEntry {
-    nick: string;
-    totalProfit: number;
-    lastUpdate: string;
-}
-
-// Ensure data directory exists
-async function ensureDataDir() {
-    const dataDir = path.join(process.cwd(), 'data');
-    try {
-        await fs.access(dataDir);
-    } catch {
-        await fs.mkdir(dataDir, { recursive: true });
-    }
-}
-
-// Read leaderboard data
-async function readLeaderboard(): Promise<LeaderboardEntry[]> {
-    try {
-        const data = await fs.readFile(DATA_FILE, 'utf-8');
-        return JSON.parse(data);
-    } catch {
-        return [];
-    }
-}
-
-// Write leaderboard data
-async function writeLeaderboard(data: LeaderboardEntry[]) {
-    await ensureDataDir();
-    await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
-}
+import redis from '@/lib/redis';
 
 export async function POST(request: Request) {
     try {
@@ -47,36 +12,21 @@ export async function POST(request: Request) {
             );
         }
 
-        // Read current leaderboard
-        const leaderboard = await readLeaderboard();
+        console.log('Redis Submit:', nick, totalProfit);
 
-        // Find existing entry or create new
-        const existingIndex = leaderboard.findIndex(entry => entry.nick === nick);
+        // Use Sorted Set for ranking (Score = Profit, Member = Nick)
+        await redis.zadd('leaderboard', totalProfit, nick);
 
-        if (existingIndex >= 0) {
-            // Update existing
-            leaderboard[existingIndex] = {
-                nick,
-                totalProfit,
-                lastUpdate: new Date().toISOString(),
-            };
-        } else {
-            // Add new
-            leaderboard.push({
-                nick,
-                totalProfit,
-                lastUpdate: new Date().toISOString(),
-            });
-        }
-
-        // Save
-        await writeLeaderboard(leaderboard);
+        // Use Hash for metadata (Last Update time)
+        await redis.hset('leaderboard:metadata', {
+            [nick]: JSON.stringify({ lastUpdate: new Date().toISOString() })
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Leaderboard submit error:', error);
         return NextResponse.json(
-            { success: false, error: 'Server error' },
+            { success: false, error: 'Server error' + JSON.stringify(error) },
             { status: 500 }
         );
     }
