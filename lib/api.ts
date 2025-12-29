@@ -8,7 +8,10 @@ export type AssetType =
     | 'gold_full'      // Tam Altın
     | 'gold_resat'     // Reşat Altın
     | 'usd'            // Amerikan Doları
-    | 'eur';           // Euro
+    | 'eur'            // Euro
+    | 'home'           // Ev
+    | 'land'           // Arsa
+    | 'car';           // Araba
 
 export interface PriceData {
     buying: number;
@@ -26,6 +29,9 @@ export interface AllPrices {
     gold_resat: PriceData;
     usd: PriceData;
     eur: PriceData;
+    home: PriceData;
+    land: PriceData;
+    car: PriceData;
     lastUpdate: string;
 }
 
@@ -93,6 +99,9 @@ export async function fetchPrices(): Promise<AllPrices | null> {
                 name: 'Euro',
                 updateDate: data.Update_Date || new Date().toISOString(),
             },
+            home: { buying: 0, selling: 0, change: 0, name: 'Ev', updateDate: new Date().toISOString() },
+            land: { buying: 0, selling: 0, change: 0, name: 'Arsa', updateDate: new Date().toISOString() },
+            car: { buying: 0, selling: 0, change: 0, name: 'Araba', updateDate: new Date().toISOString() },
             lastUpdate: data.Update_Date || new Date().toISOString(),
         };
 
@@ -167,6 +176,9 @@ export function getAssetTypeName(type: AssetType): string {
         gold_resat: 'Reşat Altın',
         usd: 'Amerikan Doları',
         eur: 'Euro',
+        home: 'Ev',
+        land: 'Arsa',
+        car: 'Araba',
     };
     return names[type];
 }
@@ -181,5 +193,8 @@ export function getAssetTypeOptions() {
         { value: 'gold_resat', label: 'Reşat Altın' },
         { value: 'usd', label: 'Amerikan Doları (USD)' },
         { value: 'eur', label: 'Euro (EUR)' },
+        { value: 'car', label: 'Araba' },
+        { value: 'home', label: 'Ev' },
+        { value: 'land', label: 'Arsa' },
     ];
 }

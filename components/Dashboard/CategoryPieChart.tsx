@@ -59,7 +59,9 @@ export function CategoryPieChart() {
                             border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '8px',
                             fontFamily: 'var(--font-inter)',
+                            color: '#fff',
                         }}
+                        itemStyle={{ color: '#fff' }}
                     />
                     <Legend
                         wrapperStyle={{

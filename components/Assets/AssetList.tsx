@@ -111,10 +111,16 @@ export function AssetList({ refresh }: AssetListProps) {
                     </thead>
                     <tbody className="divide-y divide-white/10">
                         {assets.map((asset) => {
-                            const currentPrice = prices.get(asset.assetType) || 0;
+                            // For static assets (car, home, land), use buy price as current if API returns 0
+                            let currentPrice = prices.get(asset.assetType) || 0;
+                            if (['car', 'home', 'land'].includes(asset.assetType) && currentPrice === 0) {
+                                currentPrice = asset.buyPrice;
+                            }
+
                             const totalCost = asset.quantity * asset.buyPrice;
                             const currentValue = asset.quantity * currentPrice;
                             const profit = currentValue - totalCost;
+                            // Avoid division by zero
                             const profitPercent = totalCost > 0 ? (profit / totalCost) * 100 : 0;
 
                             return (
@@ -124,7 +130,13 @@ export function AssetList({ refresh }: AssetListProps) {
                                             <span className="text-sm font-body text-white">
                                                 {getAssetTypeName(asset.assetType)}
                                             </span>
-                                            <span className="text-xs text-[#94A3B8] font-mono">
+                                            {asset.details && (
+                                                <span className="text-xs text-[#94A3B8] font-mono mt-0.5">
+                                                    {asset.assetType === 'car' && `${asset.details.brand} ${asset.details.model} (${asset.details.year})`}
+                                                    {(asset.assetType === 'home' || asset.assetType === 'land') && `${asset.details.location} (${asset.details.m2}m²)`}
+                                                </span>
+                                            )}
+                                            <span className="text-xs text-[#94A3B8]/60 font-mono">
                                                 {new Date(asset.date).toLocaleDateString('tr-TR')}
                                             </span>
                                         </div>

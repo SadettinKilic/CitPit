@@ -19,6 +19,14 @@ export interface Asset {
     buyPrice: number;
     date: Date;
     userId: number;
+    details?: {
+        brand?: string;
+        model?: string;
+        year?: number;
+        km?: number;
+        m2?: number;
+        location?: string;
+    };
 }
 
 export interface User {

@@ -22,6 +22,12 @@ export default function Home() {
 
   useEffect(() => {
     loadStats();
+
+    // Refresh data when window gains focus
+    const handleFocus = () => loadStats();
+    window.addEventListener('focus', handleFocus);
+
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   const loadStats = async () => {
