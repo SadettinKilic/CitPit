@@ -127,7 +127,10 @@ export function CategoryPieChart() {
                                 return (
                                     <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 mt-6 px-2">
                                         {payload?.map((entry: any, index: number) => {
-                                            const isActive = activeIndex === index;
+                                            // Find the real index in our data array to ensure sync
+                                            const dataIndex = data.findIndex(d => d.category === entry.value);
+                                            const isActive = activeIndex === dataIndex;
+
                                             return (
                                                 <div
                                                     key={`legend-${index}`}
@@ -135,7 +138,7 @@ export function CategoryPieChart() {
                                                         ? 'bg-white/10 border-white/20 scale-105 shadow-lg'
                                                         : 'bg-transparent border-transparent opacity-50 hover:opacity-100 hover:bg-white/5'
                                                         }`}
-                                                    onMouseEnter={() => setActiveIndex(index)}
+                                                    onMouseEnter={() => setActiveIndex(dataIndex)}
                                                     onMouseLeave={() => setActiveIndex(null)}
                                                 >
                                                     <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`} style={{ backgroundColor: entry.color }} />
