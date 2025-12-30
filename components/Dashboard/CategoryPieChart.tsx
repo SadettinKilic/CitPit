@@ -111,14 +111,16 @@ export function CategoryPieChart() {
                             onMouseEnter={onPieEnter}
                             onMouseLeave={onPieLeave}
                             stroke="none"
+                            animationDuration={1500}
+                            animationEasing="ease-in-out"
                         >
                             {data.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={COLORS[index % COLORS.length]}
                                     style={{
-                                        filter: activeIndex === index ? 'drop-shadow(0 0 8px rgba(247, 147, 26, 0.4))' : 'none',
-                                        transition: 'all 0.3s ease'
+                                        filter: activeIndex === index ? 'drop-shadow(0 0 12px rgba(247, 147, 26, 0.5))' : 'none',
+                                        transition: 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)'
                                     }}
                                 />
                             ))}
@@ -127,7 +129,7 @@ export function CategoryPieChart() {
                             content={({ active, payload }) => {
                                 if (active && payload && payload.length) {
                                     return (
-                                        <div className="bg-[#0F1115] border border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-md">
+                                        <div className="bg-[#0F1115]/80 border border-white/10 p-3 rounded-xl shadow-2xl backdrop-blur-md transition-all duration-500">
                                             <p className="text-white font-bold mb-1">{payload[0].name}</p>
                                             <p className="text-[#F7931A] font-mono text-lg">
                                                 {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(payload[0].value as number)}
@@ -139,25 +141,26 @@ export function CategoryPieChart() {
                             }}
                         />
                         <Legend
-                            onMouseEnter={onLegendEnter}
-                            onMouseLeave={onPieLeave}
                             verticalAlign="bottom"
                             height={36}
                             content={(props) => {
                                 const { payload } = props;
                                 return (
-                                    <div className="flex flex-wrap justify-center gap-4 mt-4">
-                                        {payload?.map((entry: any, index: number) => (
-                                            <div
-                                                key={`legend-${index}`}
-                                                className={`flex items-center gap-2 cursor-pointer transition-all duration-300 ${activeIndex === index ? 'scale-110' : 'opacity-70 hover:opacity-100'}`}
-                                                onMouseEnter={() => onPieEnter(null, index)}
-                                                onMouseLeave={onPieLeave}
-                                            >
-                                                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                                <span className="text-xs font-medium text-white/80">{entry.value}</span>
-                                            </div>
-                                        ))}
+                                    <div className="flex flex-wrap justify-center gap-4 mt-6">
+                                        {payload?.map((entry: any, index: number) => {
+                                            const dataIndex = data.findIndex(d => d.category === entry.value);
+                                            return (
+                                                <div
+                                                    key={`legend-${index}`}
+                                                    className={`flex items-center gap-2 cursor-pointer transition-all duration-500 ${activeIndex === dataIndex ? 'scale-110 translate-y-[-2px]' : 'opacity-60 hover:opacity-100'}`}
+                                                    onMouseEnter={() => onPieEnter(null, dataIndex)}
+                                                    onMouseLeave={onPieLeave}
+                                                >
+                                                    <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.2)]" style={{ backgroundColor: entry.color }} />
+                                                    <span className="text-[11px] font-medium text-white/90 tracking-wide uppercase">{entry.value}</span>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 );
                             }}
