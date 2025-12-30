@@ -95,7 +95,7 @@ export default function Dashboard() {
 
           {/* Mobile Advisor */}
           <div className="md:hidden w-full">
-            <InvestmentAdvisor balance={totalAsset} />
+            <InvestmentAdvisor balance={balance} />
           </div>
         </div>
 

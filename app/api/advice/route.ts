@@ -49,17 +49,18 @@ export async function POST(request: Request) {
         KULLANICI VE PİYASA DURUMU:
         - Kullanıcı Nick: ${nick}
         - Tarih: ${date}
-        - Bakiye: ${balance} TL
+        - Nakit Bakiye: ${balance} TL (Kullanıcının şu an yatırım yapabileceği boşta duran parası)
         ${marketInfo}
         ${goalPrompt}
         
         GÖREVİN:
-        Verilen GÜNCEL PİYASA FİYATLARINI analiz ederek, kullanıcının hedefine ulaşması için matematiksel ve mantıklı bir yatırım sepeti öner.
-        Sadece "altın al" deme; "Gram altın şu an X TL, bakiyenle Y adet alabilirsin" gibi somut konuş.
+        Kullanıcının elindeki ${balance} TL NAKİT BAKİYEYİ en mantıklı şekilde nasıl değerlendirebileceğini, GÜNCEL PİYASA FİYATLARINI analiz ederek öner.
+        Sadece "altın al" deme; "Gram altın şu an X TL, elindeki nakitle Y adet alarak portföyüne ekleyebilirsin" gibi somut konuş.
+        Kullanıcının mevcut varlıklarını değil, elindeki BU NAKİT PARAYI nasıl sisteme dahil etmesi gerektiğine odaklan.
         
         KESİN FORMAT KURALLARI (Buna birebir uy):
-        1. Başlangıç cümlesi: "Selam ${nick}, ${date} itibariyle ${balance} tl bakiyeni ${goal?.description || 'varlıklarını artırma'} hedefin için şu şekilde değerlendirebiliriz:"
-        2. Analiz cümlesi: Güncel fiyatlara atıfta bulun (Örn: "Doların X TL, Gümüşün Y TL olduğu bu dönemde...").
+        1. Başlangıç cümlesi: "Selam ${nick}, ${date} itibariyle boştaki ${balance} TL bakiyeni ${goal?.description || 'varlıklarını artırma'} hedefin için şu şekilde değerlendirebiliriz:"
+        2. Analiz cümlesi: Güncel fiyatlara atıfta bulunarak elindeki nakitle neler alabileceğini hesapla (Örn: "Doların X TL olduğu bu dönemde elindeki parayla Z kadar...")
         3. Sonuç cümlesi: "Sana önerim şu olabilir: [Önerin]"
         4. En fazla 3-4 cümle. Uzun paragraflar YOK.
         5. Emojileri (🚀, 📈, 💎) kullan.

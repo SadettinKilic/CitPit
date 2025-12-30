@@ -99,18 +99,18 @@ export function CategoryPieChart() {
                 {/* Manual Center Display - Independent of Recharts activeShape trigger */}
                 {activeData && (
                     <div
-                        className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center"
-                        style={{ height: '100%', width: '100%', transform: 'translateY(-20px)' }} // Half of legend's typical height
+                        className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center p-4"
+                        style={{ paddingBottom: '10%' }} // Compensate for Legend height at the bottom
                     >
-                        <div className="flex flex-col items-center justify-center p-4">
-                            <span className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1 line-clamp-1 w-full px-2 text-center">
+                        <div className="flex flex-col items-center justify-center text-center">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1 line-clamp-1 w-full px-2">
                                 {activeData.category}
                             </span>
-                            <span className="text-sm font-bold font-mono text-white mb-1">
+                            <span className="text-sm font-bold font-mono text-white mb-0.5 leading-none">
                                 {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(activeData.amount)}
                             </span>
                             <span
-                                className="text-[10px] font-bold"
+                                className="text-[10px] font-bold mt-1"
                                 style={{ color: COLORS[activeIndex % COLORS.length] }}
                             >
                                 %{((activeData.amount / totalAmount) * 100).toFixed(1)}

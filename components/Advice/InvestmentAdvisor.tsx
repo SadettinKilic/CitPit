@@ -85,17 +85,27 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
             {/* Trigger Card */}
             <div onClick={handleOpen} className="w-full cursor-pointer group relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <Card className="relative bg-gradient-to-br from-[#1a1c23] to-[#0F1115] border-white/5 group-hover:border-indigo-500/30 transition-all duration-300 overflow-hidden">
+                <Card className="relative bg-gradient-to-br from-[#1a1c23] to-[#0F1115] border-indigo-500/20 hover:border-indigo-500/50 transition-all duration-500 overflow-hidden shadow-2xl shadow-indigo-500/10 active:scale-95">
+                    {/* Animated background glow */}
+                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
+
                     <div className="relative z-10 flex items-center gap-4 p-4">
-                        <div className="p-3 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300 shadow-lg shadow-indigo-500/5">
-                            <Sparkles size={22} className="group-hover:animate-pulse-slow" />
+                        <div className="p-3 rounded-xl bg-gradient-to-tr from-indigo-600/20 to-purple-600/20 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/30 transition-all duration-300 shadow-lg shadow-indigo-500/20 border border-indigo-500/20">
+                            <Sparkles size={24} className="group-hover:animate-pulse-slow" />
                         </div>
                         <div className="flex-1 min-w-0 text-left">
-                            <h3 className="font-heading font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm md:text-base leading-tight">
-                                Yapay Zeka
-                            </h3>
-                            <p className="text-[10px] md:text-xs text-gray-400 group-hover:text-gray-300 transition-colors leading-tight mt-0.5">
-                                Yatırım Asistanı
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-heading font-bold text-white group-hover:text-indigo-300 transition-colors text-sm md:text-base leading-tight">
+                                    AI Danışman
+                                </h3>
+                                <div className="flex gap-1">
+                                    <div className="w-1 h-1 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                                    <div className="w-1 h-1 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                                    <div className="w-1 h-1 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                                </div>
+                            </div>
+                            <p className="text-[10px] md:text-xs text-indigo-400/80 group-hover:text-indigo-300 transition-colors leading-tight mt-1 font-mono uppercase tracking-wider">
+                                Akıllı Yatırım Tavsiyesi
                             </p>
                         </div>
                     </div>
