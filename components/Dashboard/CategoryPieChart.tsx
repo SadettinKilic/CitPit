@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { Card } from '../ui/Card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Sector } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from 'recharts';
 import { getCategoryExpenses } from '@/lib/calculations';
 
 const COLORS = ['#F7931A', '#EF4444', '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899'];
@@ -95,14 +95,12 @@ export function CategoryPieChart() {
                 <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-[0.2em] mt-1">Aylık Harcama Dağılımı</p>
             </div>
 
-            <div className="flex-1 min-h-[300px] relative">
-                {/* Manual Center Display - Independent of Recharts activeShape trigger */}
+            {/* Chart Container */}
+            <div className="flex-1 min-h-[280px] relative">
+                {/* Manual Center Display - Mathematically centered within the Pie area */}
                 {activeData && (
-                    <div
-                        className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center p-4"
-                        style={{ paddingBottom: '10%' }} // Compensate for Legend height at the bottom
-                    >
-                        <div className="flex flex-col items-center justify-center text-center">
+                    <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                        <div className="flex flex-col items-center justify-center text-center p-4">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1 line-clamp-1 w-full px-2">
                                 {activeData.category}
                             </span>
@@ -110,7 +108,7 @@ export function CategoryPieChart() {
                                 {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(activeData.amount)}
                             </span>
                             <span
-                                className="text-[10px] font-bold mt-1"
+                                className="text-[10px] font-bold mt-1.5"
                                 style={{ color: COLORS[activeIndex % COLORS.length] }}
                             >
                                 %{((activeData.amount / totalAmount) * 100).toFixed(1)}
@@ -130,12 +128,11 @@ export function CategoryPieChart() {
                             nameKey="category"
                             cx="50%"
                             cy="50%"
-                            innerRadius={65}
-                            outerRadius={85}
+                            innerRadius={70}
+                            outerRadius={90}
                             paddingAngle={5}
                             onMouseEnter={onPieEnter}
                             onMouseLeave={onPieLeave}
-                            // Also handle click for mobile/touch
                             onClick={onPieEnter}
                             stroke="none"
                             animationDuration={800}
@@ -152,39 +149,32 @@ export function CategoryPieChart() {
                                 />
                             ))}
                         </Pie>
-                        <Legend
-                            verticalAlign="bottom"
-                            align="center"
-                            content={(props) => {
-                                const { payload } = props;
-                                return (
-                                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-8 px-4">
-                                        {payload?.map((entry: any, index: number) => {
-                                            const isActive = activeCategory === entry.value;
-                                            return (
-                                                <div
-                                                    key={`legend-${index}`}
-                                                    className="flex items-center gap-2 cursor-pointer transition-all duration-300"
-                                                    onMouseEnter={() => setActiveCategory(entry.value)}
-                                                    onMouseLeave={() => setActiveCategory(null)}
-                                                    onClick={() => setActiveCategory(entry.value === activeCategory ? null : entry.value)}
-                                                >
-                                                    <div
-                                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/10' : ''}`}
-                                                        style={{ backgroundColor: entry.color }}
-                                                    />
-                                                    <span className={`text-[10px] font-medium transition-all duration-300 uppercase tracking-wider ${isActive ? 'text-white font-bold' : 'text-white/40'}`}>
-                                                        {entry.value}
-                                                    </span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                );
-                            }}
-                        />
                     </PieChart>
                 </ResponsiveContainer>
+            </div>
+
+            {/* Legend - Rendered outside to keep Pie perfectly centered */}
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-6 mb-2 px-4">
+                {data.map((entry, index) => {
+                    const isActive = activeCategory === entry.category;
+                    return (
+                        <div
+                            key={`legend-${index}`}
+                            className="flex items-center gap-2 cursor-pointer transition-all duration-300"
+                            onMouseEnter={() => setActiveCategory(entry.category)}
+                            onMouseLeave={() => setActiveCategory(null)}
+                            onClick={() => setActiveCategory(entry.category === activeCategory ? null : entry.category)}
+                        >
+                            <div
+                                className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/10' : ''}`}
+                                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                            />
+                            <span className={`text-[10px] font-medium transition-all duration-300 uppercase tracking-wider ${isActive ? 'text-white font-bold' : 'text-white/40'}`}>
+                                {entry.category}
+                            </span>
+                        </div>
+                    );
+                })}
             </div>
         </Card>
     );
