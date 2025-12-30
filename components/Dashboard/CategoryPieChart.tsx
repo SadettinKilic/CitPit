@@ -2,14 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card } from '../ui/Card';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend, Sector } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Sector } from 'recharts';
 import { getCategoryExpenses } from '@/lib/calculations';
 
 const COLORS = ['#F7931A', '#EF4444', '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899'];
 
 const renderActiveShape = (props: any) => {
-    const RADIAN = Math.PI / 180;
-    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
 
     return (
         <g>
@@ -46,7 +45,7 @@ const renderActiveShape = (props: any) => {
 
 export function CategoryPieChart() {
     const [data, setData] = useState<{ category: string; amount: number }[]>([]);
-    const [activeIndex, setActiveIndex] = useState<number>(-1);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     useEffect(() => {
         loadData();
@@ -62,7 +61,7 @@ export function CategoryPieChart() {
     };
 
     const onPieLeave = () => {
-        setActiveIndex(-1);
+        setActiveIndex(null);
     };
 
     if (data.length === 0) {
@@ -79,7 +78,7 @@ export function CategoryPieChart() {
     }
 
     return (
-        <Card className="flex flex-col h-full min-h-[450px] md:min-h-[400px]">
+        <Card className="flex flex-col h-full min-h-[450px]">
             <div className="mb-4">
                 <h2 className="text-xl font-heading font-semibold gradient-text leading-tight">
                     Kategori Bazlı Giderler
@@ -87,25 +86,25 @@ export function CategoryPieChart() {
                 <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-[0.2em] mt-1">Aylık Harcama Dağılımı</p>
             </div>
 
-            <div className="flex-1 relative">
+            <div className="flex-1 min-h-[300px] relative">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
                             // @ts-ignore
-                            activeIndex={activeIndex === -1 ? undefined : activeIndex}
+                            activeIndex={activeIndex === null ? undefined : activeIndex}
                             activeShape={renderActiveShape}
                             data={data}
                             dataKey="amount"
                             nameKey="category"
                             cx="50%"
-                            cy="45%"
-                            innerRadius={70}
-                            outerRadius={90}
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
                             paddingAngle={4}
                             onMouseEnter={onPieEnter}
                             onMouseLeave={onPieLeave}
                             stroke="none"
-                            animationDuration={1200}
+                            animationDuration={1000}
                             animationEasing="ease-out"
                         >
                             {data.map((entry, index) => (
@@ -115,7 +114,7 @@ export function CategoryPieChart() {
                                     className="outline-none cursor-pointer"
                                     style={{
                                         filter: activeIndex === index ? 'drop-shadow(0 0 15px rgba(247, 147, 26, 0.6))' : 'none',
-                                        transition: 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)'
+                                        transition: 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)'
                                     }}
                                 />
                             ))}
@@ -126,10 +125,9 @@ export function CategoryPieChart() {
                             content={(props) => {
                                 const { payload } = props;
                                 return (
-                                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 px-2">
+                                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 mt-6 px-2">
                                         {payload?.map((entry: any, index: number) => {
-                                            const dataIndex = data.findIndex(d => d.category === entry.value);
-                                            const isActive = activeIndex === dataIndex;
+                                            const isActive = activeIndex === index;
                                             return (
                                                 <div
                                                     key={`legend-${index}`}
@@ -137,8 +135,8 @@ export function CategoryPieChart() {
                                                         ? 'bg-white/10 border-white/20 scale-105 shadow-lg'
                                                         : 'bg-transparent border-transparent opacity-50 hover:opacity-100 hover:bg-white/5'
                                                         }`}
-                                                    onMouseEnter={() => setActiveIndex(dataIndex)}
-                                                    onMouseLeave={() => setActiveIndex(-1)}
+                                                    onMouseEnter={() => setActiveIndex(index)}
+                                                    onMouseLeave={() => setActiveIndex(null)}
                                                 >
                                                     <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`} style={{ backgroundColor: entry.color }} />
                                                     <span className={`text-[10px] font-medium transition-colors duration-300 uppercase tracking-wider ${isActive ? 'text-white' : 'text-white/70'}`}>
