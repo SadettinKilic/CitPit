@@ -1,31 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Card } from '../ui/Card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Sector } from 'recharts';
 import { getCategoryExpenses } from '@/lib/calculations';
 
 const COLORS = ['#F7931A', '#EF4444', '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EC4899'];
 
+// Simplified ActiveShape - only handles the slice expansion and outer glow
 const renderActiveShape = (props: any) => {
-    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
 
     return (
         <g>
-            <text x={cx} y={cy - 12} textAnchor="middle" fill="#94A3B8" className="text-[10px] font-mono uppercase tracking-widest">
-                {payload.category}
-            </text>
-            <text x={cx} y={cy + 12} textAnchor="middle" fill="#fff" className="text-sm font-bold font-mono">
-                {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(value)}
-            </text>
-            <text x={cx} y={cy + 30} textAnchor="middle" fill={fill} className="text-[10px] font-bold">
-                %{(percent * 100).toFixed(1)}
-            </text>
             <Sector
                 cx={cx}
                 cy={cy}
                 innerRadius={innerRadius}
-                outerRadius={outerRadius + 6}
+                outerRadius={outerRadius + 8}
                 startAngle={startAngle}
                 endAngle={endAngle}
                 fill={fill}
@@ -35,9 +27,10 @@ const renderActiveShape = (props: any) => {
                 cy={cy}
                 startAngle={startAngle}
                 endAngle={endAngle}
-                innerRadius={outerRadius + 8}
-                outerRadius={outerRadius + 10}
+                innerRadius={outerRadius + 10}
+                outerRadius={outerRadius + 12}
                 fill={fill}
+                style={{ opacity: 0.3 }}
             />
         </g>
     );
@@ -58,7 +51,17 @@ export function CategoryPieChart() {
         setData(sortedData);
     };
 
-    const activeIndex = activeCategory ? data.findIndex(d => d.category === activeCategory) : -1;
+    const activeIndex = useMemo(() =>
+        activeCategory ? data.findIndex(d => d.category === activeCategory) : -1
+        , [activeCategory, data]);
+
+    const activeData = useMemo(() =>
+        activeIndex !== -1 ? data[activeIndex] : null
+        , [activeIndex, data]);
+
+    const totalAmount = useMemo(() =>
+        data.reduce((sum, item) => sum + item.amount, 0)
+        , [data]);
 
     const onPieEnter = (_: any, index: number) => {
         if (data[index]) {
@@ -93,6 +96,27 @@ export function CategoryPieChart() {
             </div>
 
             <div className="flex-1 min-h-[300px] relative">
+                {/* Manual Center Display - Independent of Recharts activeShape trigger */}
+                {activeData && (
+                    <div
+                        className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 text-center flex flex-col items-center justify-center w-[120px] h-[120px]"
+                        style={{ marginTop: '-20px' }} // Align with Pie's cy=50% and legend offset
+                    >
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1 line-clamp-1 w-full px-2">
+                            {activeData.category}
+                        </span>
+                        <span className="text-sm font-bold font-mono text-white mb-1">
+                            {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(activeData.amount)}
+                        </span>
+                        <span
+                            className="text-[10px] font-bold"
+                            style={{ color: COLORS[activeIndex % COLORS.length] }}
+                        >
+                            %{((activeData.amount / totalAmount) * 100).toFixed(1)}
+                        </span>
+                    </div>
+                )}
+
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
@@ -104,23 +128,24 @@ export function CategoryPieChart() {
                             nameKey="category"
                             cx="50%"
                             cy="50%"
-                            innerRadius={60}
-                            outerRadius={80}
-                            paddingAngle={4}
+                            innerRadius={65}
+                            outerRadius={85}
+                            paddingAngle={5}
                             onMouseEnter={onPieEnter}
                             onMouseLeave={onPieLeave}
+                            // Also handle click for mobile/touch
+                            onClick={onPieEnter}
                             stroke="none"
-                            animationDuration={1000}
+                            animationDuration={800}
                             animationEasing="ease-out"
                         >
                             {data.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={COLORS[index % COLORS.length]}
-                                    className="outline-none cursor-pointer"
+                                    className="outline-none cursor-pointer transition-all duration-300"
                                     style={{
-                                        filter: activeIndex === index ? 'drop-shadow(0 0 15px rgba(247, 147, 26, 0.6))' : 'none',
-                                        transition: 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)'
+                                        filter: activeIndex === index ? 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.2))' : 'none',
                                     }}
                                 />
                             ))}
@@ -131,7 +156,7 @@ export function CategoryPieChart() {
                             content={(props) => {
                                 const { payload } = props;
                                 return (
-                                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 mt-6 px-2">
+                                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 mt-8 px-2">
                                         {payload?.map((entry: any, index: number) => {
                                             const isActive = activeCategory === entry.value;
                                             return (
@@ -143,8 +168,13 @@ export function CategoryPieChart() {
                                                         }`}
                                                     onMouseEnter={() => setActiveCategory(entry.value)}
                                                     onMouseLeave={() => setActiveCategory(null)}
+                                                    // Also handle click for mobile/touch
+                                                    onClick={() => setActiveCategory(entry.value === activeCategory ? null : entry.value)}
                                                 >
-                                                    <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`} style={{ backgroundColor: entry.color }} />
+                                                    <div
+                                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`}
+                                                        style={{ backgroundColor: entry.color }}
+                                                    />
                                                     <span className={`text-[10px] font-medium transition-colors duration-300 uppercase tracking-wider ${isActive ? 'text-white' : 'text-white/70'}`}>
                                                         {entry.value}
                                                     </span>
