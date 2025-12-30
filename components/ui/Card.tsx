@@ -5,15 +5,17 @@ interface CardProps {
     className?: string;
     variant?: 'standard' | 'glass';
     hover?: boolean;
+    onClick?: () => void;
 }
 
 export function Card({
     children,
     className = '',
     variant = 'standard',
-    hover = true
+    hover = true,
+    onClick
 }: CardProps) {
-    const baseStyles = 'rounded-2xl p-8 transition-all duration-300';
+    const baseStyles = 'rounded-2xl p-5 md:p-8 transition-all duration-300';
 
     const variants = {
         standard: 'bg-[#0F1115] border border-white/10',
@@ -25,7 +27,10 @@ export function Card({
         : '';
 
     return (
-        <div className={`${baseStyles} ${variants[variant]} ${hoverStyles} ${className}`}>
+        <div
+            className={`${baseStyles} ${variants[variant]} ${hoverStyles} ${className}`}
+            onClick={onClick}
+        >
             {children}
         </div>
     );
