@@ -11,6 +11,7 @@ import {
   calculateMonthlyIncome,
   calculateMonthlyExpense,
   calculateTotalProfit,
+  calculateTotalProfitPercentage,
   calculateTotalAssetValue,
 } from '@/lib/calculations';
 import { InvestmentAdvisor } from '@/components/Advice/InvestmentAdvisor';
@@ -53,13 +54,13 @@ export default function Dashboard() {
 
     // Submit to leaderboard (fire and forget)
     try {
-      const profit = await calculateTotalProfit();
+      const profitPercentage = await calculateTotalProfitPercentage();
       const user = getCurrentUser();
 
       if (user) {
         fetch('/api/leaderboard/submit', {
           method: 'POST',
-          body: JSON.stringify({ nick: user.nick, totalProfit: profit }),
+          body: JSON.stringify({ nick: user.nick, totalProfit: profitPercentage }),
           headers: { 'Content-Type': 'application/json' }
         });
       }

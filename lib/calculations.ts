@@ -242,3 +242,25 @@ export async function calculateTotalProfit(): Promise<number> {
 
     return totalProfit;
 }
+
+// Toplam kâr yüzdesi hesaplama (leaderboard için)
+export async function calculateTotalProfitPercentage(): Promise<number> {
+    const assets = await getUserAssets();
+
+    let totalCost = 0;
+    let totalProfit = 0;
+
+    for (const asset of assets) {
+        const currentPrice = await getSellingPrice(asset.assetType);
+        const currentValue = asset.quantity * currentPrice;
+        const cost = asset.quantity * asset.buyPrice;
+
+        totalCost += cost;
+        totalProfit += (currentValue - cost);
+    }
+
+    if (totalCost === 0) return 0;
+
+    // Yüzdelik olarak döndür (örn: 58.2)
+    return (totalProfit / totalCost) * 100;
+}

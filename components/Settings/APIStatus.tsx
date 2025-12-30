@@ -72,6 +72,7 @@ export function APIStatus() {
         'gold_half',
         'gold_full',
         'gold_resat',
+        'silver_gram',
         'usd',
         'eur',
     ];

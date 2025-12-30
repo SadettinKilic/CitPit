@@ -37,11 +37,20 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
             ];
             const formattedDate = `${turkishMonths[now.getMonth()]} ${now.getFullYear()}`;
 
+            const storedGoal = localStorage.getItem('finflow_goal');
+            let goalDescription = 'varlıklarını artırma';
+            if (storedGoal) {
+                try {
+                    const goalObj = JSON.parse(storedGoal);
+                    if (goalObj.description) goalDescription = goalObj.description;
+                } catch (e) { }
+            }
+
             const res = await fetch('/api/advice', {
                 method: 'POST',
                 body: JSON.stringify({
                     balance,
-                    goal: localStorage.getItem('finflow_goal') || 'balanced',
+                    goal: goalDescription,
                     prices, // Send real-time prices to AI
                     nick: user?.nick || 'FinFlow Kullanıcısı',
                     date: formattedDate

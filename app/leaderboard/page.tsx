@@ -148,7 +148,7 @@ export default function LeaderboardPage() {
                                                 </td>
                                                 <td className={`px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-mono text-right font-bold ${entry.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'
                                                     }`}>
-                                                    {entry.totalProfit >= 0 ? '+' : ''}{formatCurrency(entry.totalProfit)}
+                                                    {entry.totalProfit >= 0 ? '+' : ''}{entry.totalProfit.toFixed(1)}%
                                                 </td>
                                             </tr>
                                         );
