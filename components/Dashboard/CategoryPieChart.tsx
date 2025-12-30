@@ -46,7 +46,7 @@ const renderActiveShape = (props: any) => {
 
 export function CategoryPieChart() {
     const [data, setData] = useState<{ category: string; amount: number }[]>([]);
-    const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
+    const [activeIndex, setActiveIndex] = useState<number>(-1);
 
     useEffect(() => {
         loadData();
@@ -62,7 +62,7 @@ export function CategoryPieChart() {
     };
 
     const onPieLeave = () => {
-        setActiveIndex(undefined);
+        setActiveIndex(-1);
     };
 
     if (data.length === 0) {
@@ -92,7 +92,7 @@ export function CategoryPieChart() {
                     <PieChart>
                         <Pie
                             // @ts-ignore
-                            activeIndex={activeIndex}
+                            activeIndex={activeIndex === -1 ? undefined : activeIndex}
                             activeShape={renderActiveShape}
                             data={data}
                             dataKey="amount"
@@ -105,16 +105,17 @@ export function CategoryPieChart() {
                             onMouseEnter={onPieEnter}
                             onMouseLeave={onPieLeave}
                             stroke="none"
-                            animationDuration={1800}
+                            animationDuration={1200}
                             animationEasing="ease-out"
                         >
                             {data.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
                                     fill={COLORS[index % COLORS.length]}
+                                    className="outline-none cursor-pointer"
                                     style={{
                                         filter: activeIndex === index ? 'drop-shadow(0 0 15px rgba(247, 147, 26, 0.6))' : 'none',
-                                        transition: 'all 0.8s cubic-bezier(0.23, 1, 0.32, 1)'
+                                        transition: 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)'
                                     }}
                                 />
                             ))}
@@ -128,15 +129,21 @@ export function CategoryPieChart() {
                                     <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 px-2">
                                         {payload?.map((entry: any, index: number) => {
                                             const dataIndex = data.findIndex(d => d.category === entry.value);
+                                            const isActive = activeIndex === dataIndex;
                                             return (
                                                 <div
                                                     key={`legend-${index}`}
-                                                    className={`flex items-center gap-2 cursor-pointer transition-all duration-700 py-1 px-2 rounded-lg ${activeIndex === dataIndex ? 'bg-white/10 scale-105' : 'opacity-50 hover:opacity-100 hover:bg-white/5'}`}
+                                                    className={`flex items-center gap-2 cursor-pointer transition-all duration-300 py-1.5 px-3 rounded-xl border ${isActive
+                                                        ? 'bg-white/10 border-white/20 scale-105 shadow-lg'
+                                                        : 'bg-transparent border-transparent opacity-50 hover:opacity-100 hover:bg-white/5'
+                                                        }`}
                                                     onMouseEnter={() => setActiveIndex(dataIndex)}
-                                                    onMouseLeave={() => setActiveIndex(undefined)}
+                                                    onMouseLeave={() => setActiveIndex(-1)}
                                                 >
-                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                                    <span className="text-[10px] font-medium text-white/90 leading-none uppercase tracking-wider">{entry.value}</span>
+                                                    <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`} style={{ backgroundColor: entry.color }} />
+                                                    <span className={`text-[10px] font-medium transition-colors duration-300 uppercase tracking-wider ${isActive ? 'text-white' : 'text-white/70'}`}>
+                                                        {entry.value}
+                                                    </span>
                                                 </div>
                                             );
                                         })}
