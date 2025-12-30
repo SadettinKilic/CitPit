@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
 import { getPrices } from '@/lib/api';
+import { getCurrentUser } from '@/lib/auth';
 import { Modal } from '@/components/ui/Modal';
 
 interface InvestmentAdvisorProps {
@@ -28,12 +29,22 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
         setError(null);
         try {
             const prices = await getPrices();
+            const user = getCurrentUser();
+            const now = new Date();
+            const turkishMonths = [
+                'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+            ];
+            const formattedDate = `${turkishMonths[now.getMonth()]} ${now.getFullYear()}`;
+
             const res = await fetch('/api/advice', {
                 method: 'POST',
                 body: JSON.stringify({
                     balance,
                     goal: localStorage.getItem('finflow_goal') || 'balanced',
-                    prices // Send real-time prices to AI
+                    prices, // Send real-time prices to AI
+                    nick: user?.nick || 'FinFlow Kullanıcısı',
+                    date: formattedDate
                 }),
                 headers: { 'Content-Type': 'application/json' }
             });

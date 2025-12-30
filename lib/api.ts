@@ -7,6 +7,7 @@ export type AssetType =
     | 'gold_half'      // Yarım Altın
     | 'gold_full'      // Tam Altın
     | 'gold_resat'     // Reşat Altın
+    | 'silver_gram'    // Gümüş Gram
     | 'usd'            // Amerikan Doları
     | 'eur'            // Euro
     | 'home'           // Ev
@@ -27,6 +28,7 @@ export interface AllPrices {
     gold_half: PriceData;
     gold_full: PriceData;
     gold_resat: PriceData;
+    silver_gram: PriceData;
     usd: PriceData;
     eur: PriceData;
     home: PriceData;
@@ -89,6 +91,13 @@ export async function fetchPrices(): Promise<AllPrices | null> {
                 selling: data.RESATALTIN?.Selling || 0,
                 change: data.RESATALTIN?.Change || 0,
                 name: 'Reşat Altın',
+                updateDate: data.Update_Date || new Date().toISOString(),
+            },
+            silver_gram: {
+                buying: data.GUMUS?.Buying || 0,
+                selling: data.GUMUS?.Selling || 0,
+                change: data.GUMUS?.Change || 0,
+                name: 'Gümüş Gram',
                 updateDate: data.Update_Date || new Date().toISOString(),
             },
             usd: {
@@ -180,6 +189,7 @@ export function getAssetTypeName(type: AssetType): string {
         gold_half: 'Yarım Altın',
         gold_full: 'Tam Altın',
         gold_resat: 'Reşat Altın',
+        silver_gram: 'Gümüş Gram',
         usd: 'Amerikan Doları',
         eur: 'Euro',
         home: 'Ev',
@@ -197,6 +207,7 @@ export function getAssetTypeOptions() {
         { value: 'gold_half', label: 'Yarım Altın' },
         { value: 'gold_full', label: 'Tam Altın' },
         { value: 'gold_resat', label: 'Reşat Altın' },
+        { value: 'silver_gram', label: 'Gümüş (Gram)' },
         { value: 'usd', label: 'Amerikan Doları (USD)' },
         { value: 'eur', label: 'Euro (EUR)' },
         { value: 'car', label: 'Araba' },
