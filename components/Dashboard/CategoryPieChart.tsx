@@ -99,21 +99,23 @@ export function CategoryPieChart() {
                 {/* Manual Center Display - Independent of Recharts activeShape trigger */}
                 {activeData && (
                     <div
-                        className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 text-center flex flex-col items-center justify-center w-[120px] h-[120px]"
-                        style={{ marginTop: '-20px' }} // Align with Pie's cy=50% and legend offset
+                        className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center"
+                        style={{ height: '100%', width: '100%', transform: 'translateY(-20px)' }} // Half of legend's typical height
                     >
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1 line-clamp-1 w-full px-2">
-                            {activeData.category}
-                        </span>
-                        <span className="text-sm font-bold font-mono text-white mb-1">
-                            {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(activeData.amount)}
-                        </span>
-                        <span
-                            className="text-[10px] font-bold"
-                            style={{ color: COLORS[activeIndex % COLORS.length] }}
-                        >
-                            %{((activeData.amount / totalAmount) * 100).toFixed(1)}
-                        </span>
+                        <div className="flex flex-col items-center justify-center p-4">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1 line-clamp-1 w-full px-2 text-center">
+                                {activeData.category}
+                            </span>
+                            <span className="text-sm font-bold font-mono text-white mb-1">
+                                {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(activeData.amount)}
+                            </span>
+                            <span
+                                className="text-[10px] font-bold"
+                                style={{ color: COLORS[activeIndex % COLORS.length] }}
+                            >
+                                %{((activeData.amount / totalAmount) * 100).toFixed(1)}
+                            </span>
+                        </div>
                     </div>
                 )}
 
@@ -156,26 +158,22 @@ export function CategoryPieChart() {
                             content={(props) => {
                                 const { payload } = props;
                                 return (
-                                    <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 mt-8 px-2">
+                                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-8 px-4">
                                         {payload?.map((entry: any, index: number) => {
                                             const isActive = activeCategory === entry.value;
                                             return (
                                                 <div
                                                     key={`legend-${index}`}
-                                                    className={`flex items-center gap-2 cursor-pointer transition-all duration-300 py-1.5 px-3 rounded-xl border ${isActive
-                                                        ? 'bg-white/10 border-white/20 scale-105 shadow-lg'
-                                                        : 'bg-transparent border-transparent opacity-50 hover:opacity-100 hover:bg-white/5'
-                                                        }`}
+                                                    className="flex items-center gap-2 cursor-pointer transition-all duration-300"
                                                     onMouseEnter={() => setActiveCategory(entry.value)}
                                                     onMouseLeave={() => setActiveCategory(null)}
-                                                    // Also handle click for mobile/touch
                                                     onClick={() => setActiveCategory(entry.value === activeCategory ? null : entry.value)}
                                                 >
                                                     <div
-                                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`}
+                                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/10' : ''}`}
                                                         style={{ backgroundColor: entry.color }}
                                                     />
-                                                    <span className={`text-[10px] font-medium transition-colors duration-300 uppercase tracking-wider ${isActive ? 'text-white' : 'text-white/70'}`}>
+                                                    <span className={`text-[10px] font-medium transition-all duration-300 uppercase tracking-wider ${isActive ? 'text-white font-bold' : 'text-white/40'}`}>
                                                         {entry.value}
                                                     </span>
                                                 </div>
