@@ -45,7 +45,7 @@ const renderActiveShape = (props: any) => {
 
 export function CategoryPieChart() {
     const [data, setData] = useState<{ category: string; amount: number }[]>([]);
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
     useEffect(() => {
         loadData();
@@ -53,15 +53,21 @@ export function CategoryPieChart() {
 
     const loadData = async () => {
         const categories = await getCategoryExpenses();
-        setData(categories);
+        // Sort by amount descending for a better visual look and stability
+        const sortedData = categories.sort((a, b) => b.amount - a.amount);
+        setData(sortedData);
     };
 
+    const activeIndex = activeCategory ? data.findIndex(d => d.category === activeCategory) : -1;
+
     const onPieEnter = (_: any, index: number) => {
-        setActiveIndex(index);
+        if (data[index]) {
+            setActiveCategory(data[index].category);
+        }
     };
 
     const onPieLeave = () => {
-        setActiveIndex(null);
+        setActiveCategory(null);
     };
 
     if (data.length === 0) {
@@ -91,7 +97,7 @@ export function CategoryPieChart() {
                     <PieChart>
                         <Pie
                             // @ts-ignore
-                            activeIndex={activeIndex === null ? undefined : activeIndex}
+                            activeIndex={activeIndex === -1 ? undefined : activeIndex}
                             activeShape={renderActiveShape}
                             data={data}
                             dataKey="amount"
@@ -127,10 +133,7 @@ export function CategoryPieChart() {
                                 return (
                                     <div className="flex flex-wrap justify-center gap-x-3 gap-y-2 mt-6 px-2">
                                         {payload?.map((entry: any, index: number) => {
-                                            // Find the real index in our data array to ensure sync
-                                            const dataIndex = data.findIndex(d => d.category === entry.value);
-                                            const isActive = activeIndex === dataIndex;
-
+                                            const isActive = activeCategory === entry.value;
                                             return (
                                                 <div
                                                     key={`legend-${index}`}
@@ -138,8 +141,8 @@ export function CategoryPieChart() {
                                                         ? 'bg-white/10 border-white/20 scale-105 shadow-lg'
                                                         : 'bg-transparent border-transparent opacity-50 hover:opacity-100 hover:bg-white/5'
                                                         }`}
-                                                    onMouseEnter={() => setActiveIndex(dataIndex)}
-                                                    onMouseLeave={() => setActiveIndex(null)}
+                                                    onMouseEnter={() => setActiveCategory(entry.value)}
+                                                    onMouseLeave={() => setActiveCategory(null)}
                                                 >
                                                     <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'scale-125 ring-2 ring-white/20' : ''}`} style={{ backgroundColor: entry.color }} />
                                                     <span className={`text-[10px] font-medium transition-colors duration-300 uppercase tracking-wider ${isActive ? 'text-white' : 'text-white/70'}`}>
