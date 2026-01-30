@@ -52,11 +52,11 @@ export function PINScreen({ onUnlock }: PINScreenProps) {
                     <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center glow-orange-lg mb-4">
                         <Lock size={40} className="text-white" />
                     </div>
-                    <h1 className="text-3xl font-heading font-bold gradient-text mb-2">
-                        FinFlow
-                    </h1>
-                    <p className="text-[#94A3B8] text-sm font-body text-center">
-                        Kişisel Finans Yönetimi
+                    <h2 className="text-xl font-heading font-bold text-white mb-1">
+                        Hoş Geldiniz, ÇıtPıt
+                    </h2>
+                    <p className="text-sm text-gray-400 font-body">
+                        Devam etmek için PIN girin
                     </p>
                 </div>
 
@@ -68,8 +68,8 @@ export function PINScreen({ onUnlock }: PINScreenProps) {
                             setError('');
                         }}
                         className={`flex-1 py-2 px-4 rounded-lg font-mono text-sm transition-all ${mode === 'login'
-                                ? 'bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 text-[#F7931A] border border-[#F7931A]/50'
-                                : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+                            ? 'bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 text-[#F7931A] border border-[#F7931A]/50'
+                            : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
                             }`}
                     >
                         Giriş Yap
@@ -80,8 +80,8 @@ export function PINScreen({ onUnlock }: PINScreenProps) {
                             setError('');
                         }}
                         className={`flex-1 py-2 px-4 rounded-lg font-mono text-sm transition-all ${mode === 'register'
-                                ? 'bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 text-[#F7931A] border border-[#F7931A]/50'
-                                : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
+                            ? 'bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 text-[#F7931A] border border-[#F7931A]/50'
+                            : 'text-[#94A3B8] hover:text-white hover:bg-white/5'
                             }`}
                     >
                         Kayıt Ol

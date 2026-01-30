@@ -50,7 +50,7 @@ export function Sidebar() {
                         <TrendingUp size={24} className="text-white" />
                     </div>
                     <h1 className="text-2xl font-heading font-bold gradient-text">
-                        FinFlow
+                        ÇıtPıt
                     </h1>
                 </Link>
             </div>
@@ -101,7 +101,7 @@ export function Sidebar() {
                 )}
 
                 <p className="text-xs text-[#94A3B8] font-mono text-center">
-                    FinFlow v2.0
+                    ÇıtPıt v1.0
                 </p>
             </div>
         </aside>

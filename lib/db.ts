@@ -44,7 +44,7 @@ export interface Setting {
     [key: string]: any;
 }
 
-const db = new Dexie('FinFlowDB') as Dexie & {
+const db = new Dexie('citpit-db') as Dexie & {
     transactions: EntityTable<Transaction, 'id'>;
     assets: EntityTable<Asset, 'id'>;
     users: EntityTable<User, 'id'>;

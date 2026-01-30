@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         }
 
         const prompt = `
-        Sen FinFlow uygulamasının **Nötr-Realist** ve **Yapıcı** finansal danışmanısın.
+        Sen ÇıtPıt uygulamasının **Nötr-Realist** ve **Yapıcı** finansal danışmanısın.
         
         KİMLİĞİN VE TONUN:
         - **Rolün:** Kullanıcının finansal iyiliğini isteyen, deneyimli bir yatırım mentoru.

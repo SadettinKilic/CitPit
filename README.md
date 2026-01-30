@@ -1,8 +1,8 @@
-# 🌊 FinFlow v3.0 - Kişisel Finans & Yatırım Takibi
+# 🌊# ÇıtPıt - Kişisel Finans Yönetimi
 
-FinFlow, gelir/gider yönetimi ve yatırım portföyünüzü (altın, gümüş, döviz, emlak, araç) takip etmenizi sağlayan, yapay zeka destekli ve **yüzdelik kâr bazlı leaderboard** sistemiyle rekabetçi bir yaklaşım sunan modern Next.js uygulamasıdır.
+**ÇıtPıt**, harcamalarınızı, gelirlerinizi ve varlıklarınızı (Altın, Gümüş, Döviz vb.) kolayca takip etmenizi sağlayan modern bir web uygulamasıdır. Canlı piyasa verileriyle varlıklarınızın güncel değerini anlık olarak hesaplar.
 
-**Canlı Demo:** [https://finflow-teal-omega.vercel.app](https://finflow-teal-omega.vercel.app)
+🔗 **Canlı Demo:** [https://citpit.vercel.app](https://citpit.vercel.app)
 
 ## ✨ Özellikler
 

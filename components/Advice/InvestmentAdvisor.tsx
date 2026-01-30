@@ -56,7 +56,7 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
                     goal: goalDescription,
                     prices, // Send real-time prices to AI
                     trends, // Send historical data
-                    nick: user?.nick || 'FinFlow Kullanıcısı',
+                    nick: user?.nick || 'ÇıtPıt Kullanıcısı',
                     date: formattedDate
                 }),
                 headers: { 'Content-Type': 'application/json' }

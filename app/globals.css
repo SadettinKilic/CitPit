@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Bitcoin DeFi Design System - FinFlow */
+/* Bitcoin DeFi Design System - ÇıtPıt */
 
 :root {
   /* Colors - True Void Foundation with Bitcoin Fire Energy */
@@ -24,7 +24,7 @@
   --color-bitcoin-orange: var(--bitcoin-orange);
   --color-burnt-orange: var(--burnt-orange);
   --color-digital-gold: var(--digital-gold);
-  
+
   /* Font References */
   --font-heading: var(--font-space-grotesk);
   --font-body: var(--font-inter);
@@ -53,18 +53,24 @@ body {
 
 /* Custom Animations */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
 }
 
 @keyframes glow-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -74,6 +80,7 @@ body {
   0% {
     background-position: -1000px 0;
   }
+
   100% {
     background-position: 1000px 0;
   }

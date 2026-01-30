@@ -86,7 +86,7 @@ export default function Dashboard() {
           <div>
             <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">
               <span className="text-white">Hoş Geldiniz,</span>{' '}
-              <span className="gradient-text">FinFlow</span>
+              <span className="text-[#F7931A]">ÇıtPıt</span>
             </h1>
             <p className="text-[#94A3B8] font-body text-sm md:text-base">
               Kişisel finans ve varlıklarınızın özeti

@@ -21,8 +21,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FinFlow - Kişisel Finans Yönetimi",
-  description: "Kişisel finans ve harcamalarınızı yönetin, gelir/gider takibi yapın, altın/gümüş birikimlerinizi izleyin.",
+  title: "ÇıtPıt - Kişisel Finans Yönetimi",
+  description: "Altın, Gümüş ve Bitcoin varlıklarınızı takip edin.",
 };
 
 export default function RootLayout({
