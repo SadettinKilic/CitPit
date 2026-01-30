@@ -37,6 +37,9 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
             ];
             const formattedDate = `${turkishMonths[now.getMonth()]} ${now.getFullYear()}`;
 
+            // Fetch financial trends for AI context
+            const trends = await import('@/lib/calculations').then(mod => mod.getLast6MonthsTrend());
+
             const storedGoal = localStorage.getItem('finflow_goal');
             let goalDescription = 'varlıklarını artırma';
             if (storedGoal) {
@@ -52,6 +55,7 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
                     balance,
                     goal: goalDescription,
                     prices, // Send real-time prices to AI
+                    trends, // Send historical data
                     nick: user?.nick || 'FinFlow Kullanıcısı',
                     date: formattedDate
                 }),

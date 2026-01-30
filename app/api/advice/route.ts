@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: Request) {
     try {
-        const { balance, date, goal, prices, nick } = await request.json();
+        const { balance, date, goal, prices, nick, trends } = await request.json();
         const apiKey = process.env.GEMINI_API_KEY;
         console.log('Advice Request:', { balance, date, goal, hasPrices: !!prices, nick });
 
@@ -44,28 +44,39 @@ export async function POST(request: Request) {
         }
 
         const prompt = `
-        Sen FinFlow uygulamasının yatırım asistanısın.
+        Sen FinFlow uygulamasının zeki ve veri odaklı finansal danışmanısın.
         
-        KULLANICI VE PİYASA DURUMU:
+        KULLANICI VERİLERİ:
         - Kullanıcı Nick: ${nick}
         - Tarih: ${date}
-        - Nakit Bakiye: ${balance} TL (Kullanıcının şu an yatırım yapabileceği boşta duran parası)
+        - Mevcut Nakit Bakiye: ${balance} TL
+        - Finansal Geçmiş (Son 6 Ay): ${JSON.stringify(trends)}
         ${marketInfo}
         ${goalPrompt}
         
         GÖREVİN:
-        Kullanıcının elindeki ${balance} TL NAKİT BAKİYEYİ en mantıklı şekilde nasıl değerlendirebileceğini, GÜNCEL PİYASA FİYATLARINI analiz ederek öner.
-        Sadece "altın al" deme; "Gram altın şu an X TL, elindeki nakitle Y adet alarak portföyüne ekleyebilirsin" gibi somut konuş.
-        Kullanıcının mevcut varlıklarını değil, elindeki BU NAKİT PARAYI nasıl sisteme dahil etmesi gerektiğine odaklan.
+        Kullanıcının durumunu analiz et ve ASAĞIDAKİ FORMATTA yanıt ver. Yanıtın kısa, öz ve motive edici olsun.
         
-        KESİN FORMAT KURALLARI (Buna birebir uy):
-        1. Başlangıç cümlesi: "Selam ${nick}, ${date} itibariyle boştaki ${balance} TL bakiyeni ${goal?.description || 'varlıklarını artırma'} hedefin için şu şekilde değerlendirebiliriz:"
-        2. Analiz cümlesi: Güncel fiyatlara atıfta bulunarak elindeki nakitle neler alabileceğini hesapla (Örn: "Doların X TL olduğu bu dönemde elindeki parayla Z kadar...")
-        3. Sonuç cümlesi: "Sana önerim şu olabilir: [Önerin]"
-        4. En fazla 3-4 cümle. Uzun paragraflar YOK.
-        5. Emojileri (🚀, 📈, 💎) kullan.
+        KESİN UYULMASI GEREKEN FORMAT:
         
-        Yasal uyarı yapma. Arkadaşça, zeki ve veri odaklı ol.
+        Selam ${nick},
+        ${date} itibariyle durumunu değerlendirelim.
+        Bakiyen: ${new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(balance)} TL
+        
+        Sana önerim: 
+        (Buraya kullanıcının elindeki bakiyeyi ve piyasa durumunu düşünerek EN MANTIKLI yatırım senaryosunu tek bir cümleyle yaz. Örn: "Doların stabil olduğu bu dönemde elindeki nakit ile X gram altın alarak portföyünü güçlendirebilirsin.")
+        
+        (Buraya Gelecek Vizyonu: Kullanıcının son 6 aydaki gelir/gider dengesine bakarak 1-2 cümlelik yorum yap. Eğer giderleri gelire çok yakınsa uyar, birikim yapıyorsa tebrik et. Örn: "Son aylarda giderlerin gelirine çok yaklaşmış, biraz daha dikkatli olup nakit akışını pozitife çevirmelisin." veya "İstikrarlı bir şekilde artıda kalman harika, bu disiplinle hedeflerine hızlıca ulaşabilirsin.")
+        
+        (Buraya Uyarı/Tavsiye: Harcama alışkanlıklarına dair kısa, arkadaşça bir yorum ekle. Maksimum 1 cümle. Örn: "Yatırımlarını çeşitlendirerek riskini dağıtmayı düşünebilirsin." veya "Harcamalarını biraz daha kısabilirsen yatırım için elin çok daha güçlenir.")
+        
+        KURALLAR:
+        - Yanıt kesinlikle yukarıdaki 3 paragraf yapısında olsun.
+        - "Sana önerim:" başlığını kullan.
+        - Asla uzun paragraflar yazma.
+        - Samimi ama profesyonel ol.
+        - Emojileri dozunda kullan (🚀, 💡, 📊).
+        - Yasal yatırım tavsiyesi değildir uyarısı EKLEME.    
         `;
 
         const genAI = new GoogleGenerativeAI(apiKey);
