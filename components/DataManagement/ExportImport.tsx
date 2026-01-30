@@ -78,7 +78,7 @@ export function ExportImport() {
     };
 
     return (
-        <Card>
+        <Card className="h-fit"> {/* Kartın aşağı uzamasını engellemek için h-fit ekledik */}
             <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-lg bg-[#F7931A]/20 border border-[#F7931A]/50 flex items-center justify-center glow-orange">
                     <Download size={24} className="text-[#F7931A]" />
@@ -93,9 +93,10 @@ export function ExportImport() {
                     <h3 className="text-sm font-body text-[#94A3B8] mb-2">
                         Verileri Dışa Aktar (Yedekleme)
                     </h3>
-                    <Button onClick={handleExport} variant="outline" className="w-full">
-                        <Download size={20} className="mr-2" />
-                        JSON Olarak İndir
+                    {/* flex items-center justify-center ekleyerek tam ortaladık */}
+                    <Button onClick={handleExport} variant="outline" className="w-full flex items-center justify-center gap-2">
+                        <Download size={20} />
+                        <span>JSON Olarak İndir</span>
                     </Button>
                 </div>
 
@@ -114,11 +115,11 @@ export function ExportImport() {
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full"
+                            className="w-full flex items-center justify-center gap-2"
                             onClick={() => document.getElementById('import-file')?.click()}
                         >
-                            <Upload size={20} className="mr-2" />
-                            JSON Dosyası Seç
+                            <Upload size={20} />
+                            <span>JSON Dosyası Seç</span>
                         </Button>
                     </label>
                 </div>
