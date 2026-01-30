@@ -39,13 +39,14 @@ const renderActiveShape = (props: any) => {
 export function CategoryPieChart() {
     const [data, setData] = useState<{ category: string; amount: number }[]>([]);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [monthsBack, setMonthsBack] = useState<0 | 1 | 2>(0); // 0 = current month, 1 = last 2 months, 2 = last 3 months
 
     useEffect(() => {
         loadData();
-    }, []);
+    }, [monthsBack]);
 
     const loadData = async () => {
-        const categories = await getCategoryExpenses();
+        const categories = await getCategoryExpenses(monthsBack);
         // Sort by amount descending for a better visual look and stability
         const sortedData = categories.sort((a, b) => b.amount - a.amount);
         setData(sortedData);
@@ -89,10 +90,43 @@ export function CategoryPieChart() {
     return (
         <Card className="flex flex-col h-full min-h-[450px]">
             <div className="mb-4">
-                <h2 className="text-xl font-heading font-semibold gradient-text leading-tight">
-                    Kategori Bazlı Giderler
-                </h2>
-                <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-[0.2em] mt-1">Aylık Harcama Dağılımı</p>
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <h2 className="text-xl font-heading font-semibold gradient-text leading-tight">
+                            Kategori Bazlı Giderler
+                        </h2>
+                        <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-[0.2em] mt-1">Harcama Dağılımı</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setMonthsBack(0)}
+                            className={`px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-mono rounded-lg transition-all ${monthsBack === 0
+                                    ? 'bg-[#F7931A] text-white'
+                                    : 'bg-white/5 text-[#94A3B8] hover:bg-white/10'
+                                }`}
+                        >
+                            Bu Ay
+                        </button>
+                        <button
+                            onClick={() => setMonthsBack(1)}
+                            className={`px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-mono rounded-lg transition-all ${monthsBack === 1
+                                    ? 'bg-[#F7931A] text-white'
+                                    : 'bg-white/5 text-[#94A3B8] hover:bg-white/10'
+                                }`}
+                        >
+                            Son 2 Ay
+                        </button>
+                        <button
+                            onClick={() => setMonthsBack(2)}
+                            className={`px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-mono rounded-lg transition-all ${monthsBack === 2
+                                    ? 'bg-[#F7931A] text-white'
+                                    : 'bg-white/5 text-[#94A3B8] hover:bg-white/10'
+                                }`}
+                        >
+                            Son 3 Ay
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Chart Container */}

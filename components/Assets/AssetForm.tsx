@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { Input, Select } from '../ui/Input';
 import { Button } from '../ui/Button';
-import { db } from '@/lib/db';
+import { db, type Asset } from '@/lib/db';
 import { getCurrentUserId } from '@/lib/auth';
 import { getAssetTypeOptions, getBuyingPrice, type AssetType } from '@/lib/api';
 
@@ -12,9 +12,10 @@ interface AssetFormProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    editingAsset?: Asset | null;
 }
 
-export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
+export function AssetForm({ isOpen, onClose, onSuccess, editingAsset }: AssetFormProps) {
     const [assetType, setAssetType] = useState<AssetType>('gold_gram');
     const [quantity, setQuantity] = useState('');
     const [buyPrice, setBuyPrice] = useState('');
@@ -33,10 +34,43 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
     const [location, setLocation] = useState('');
 
     useEffect(() => {
-        if (isOpen) {
+        if (editingAsset) {
+            setAssetType(editingAsset.assetType);
+            setQuantity(editingAsset.quantity?.toString() || '');
+            setBuyPrice(editingAsset.buyPrice.toString());
+            setDate(new Date(editingAsset.date).toISOString().split('T')[0]);
+
+            // Load dynamic fields from editingAsset.details
+            const details = editingAsset.details || {};
+            if (editingAsset.assetType === 'car') {
+                setBrand(details.brand || '');
+                setModel(details.model || '');
+                setYear(details.year?.toString() || '');
+                setKm(details.km?.toString() || '');
+            } else if (editingAsset.assetType === 'home') {
+                setLocation(details.location || '');
+                setM2(details.m2?.toString() || '');
+                setRoomCount(details.roomCount || '2+1');
+            } else if (editingAsset.assetType === 'land') {
+                setLocation(details.location || '');
+                setM2(details.m2?.toString() || '');
+            }
+        } else {
+            // Reset to defaults when not editing
+            setAssetType('gold_gram');
+            setQuantity('');
+            setBuyPrice('');
+            setDate(new Date().toISOString().split('T')[0]);
+            setBrand(''); setModel(''); setYear(''); setKm('');
+            setM2(''); setRoomCount('2+1'); setLocation('');
+        }
+    }, [editingAsset]);
+
+    useEffect(() => {
+        if (isOpen && !editingAsset) {
             loadCurrentPrice();
         }
-    }, [assetType, isOpen]);
+    }, [assetType, isOpen, editingAsset]);
 
     const loadCurrentPrice = async () => {
         // Only fetch API price for standard assets
@@ -105,14 +139,26 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
                 details.m2 = parseInt(m2);
             }
 
-            await db.assets.add({
-                assetType,
-                quantity: parseFloat(quantity) || 1, // Default to 1 for unique assets like car/home
-                buyPrice: parseFloat(buyPrice),
-                date: new Date(date),
-                userId,
-                details
-            });
+            if (editingAsset && editingAsset.id) {
+                // Update existing asset
+                await db.assets.update(editingAsset.id, {
+                    assetType,
+                    quantity: parseFloat(quantity) || 1,
+                    buyPrice: parseFloat(buyPrice),
+                    date: new Date(date),
+                    details
+                });
+            } else {
+                // Add new asset
+                await db.assets.add({
+                    assetType,
+                    quantity: parseFloat(quantity) || 1, // Default to 1 for unique assets like car/home
+                    buyPrice: parseFloat(buyPrice),
+                    date: new Date(date),
+                    userId,
+                    details
+                });
+            }
 
             // Reset form
             setAssetType('gold_gram');
@@ -125,7 +171,7 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
             onClose();
         } catch (error) {
             console.error('Asset error:', error);
-            alert('Varlık eklenirken hata oluştu');
+            alert(editingAsset ? 'Varlık güncellenirken hata oluştu' : 'Varlık eklenirken hata oluştu');
         } finally {
             setLoading(false);
         }
@@ -134,7 +180,7 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
     const isAiSupported = ['car', 'home', 'land'].includes(assetType);
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Yeni Varlık Ekle">
+        <Modal isOpen={isOpen} onClose={onClose} title={editingAsset ? "Varlığı Düzenle" : "Yeni Varlık Ekle"}>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Select
                     label="Varlık Tipi"
@@ -238,7 +284,7 @@ export function AssetForm({ isOpen, onClose, onSuccess }: AssetFormProps) {
                         İptal
                     </Button>
                     <Button type="submit" disabled={loading} className="flex-1">
-                        {loading ? 'Ekleniyor...' : 'Ekle'}
+                        {loading ? (editingAsset ? 'Güncelleniyor...' : 'Ekleniyor...') : (editingAsset ? 'Güncelle' : 'Ekle')}
                     </Button>
                 </div>
             </form>

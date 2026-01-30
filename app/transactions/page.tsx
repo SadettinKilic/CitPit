@@ -6,13 +6,25 @@ import { TransactionForm } from '@/components/Transactions/TransactionForm';
 import { TransactionList } from '@/components/Transactions/TransactionList';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
+import type { Transaction } from '@/lib/db';
 
 export default function TransactionsPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [refresh, setRefresh] = useState(0);
+    const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
     const handleSuccess = () => {
         setRefresh(prev => prev + 1);
+    };
+
+    const handleEdit = (transaction: Transaction) => {
+        setEditingTransaction(transaction);
+        setIsFormOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsFormOpen(false);
+        setEditingTransaction(null);
     };
 
     return (
@@ -34,12 +46,13 @@ export default function TransactionsPage() {
                     </Button>
                 </div>
 
-                <TransactionList refresh={refresh} />
+                <TransactionList refresh={refresh} onEdit={handleEdit} />
 
                 <TransactionForm
                     isOpen={isFormOpen}
-                    onClose={() => setIsFormOpen(false)}
+                    onClose={handleClose}
                     onSuccess={handleSuccess}
+                    editingTransaction={editingTransaction}
                 />
             </div>
         </AppLayout>

@@ -6,13 +6,25 @@ import { AssetForm } from '@/components/Assets/AssetForm';
 import { AssetList } from '@/components/Assets/AssetList';
 import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
+import type { Asset } from '@/lib/db';
 
 export default function AssetsPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [refresh, setRefresh] = useState(0);
+    const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
 
     const handleSuccess = () => {
         setRefresh(prev => prev + 1);
+    };
+
+    const handleEdit = (asset: Asset) => {
+        setEditingAsset(asset);
+        setIsFormOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsFormOpen(false);
+        setEditingAsset(null);
     };
 
     return (
@@ -34,12 +46,13 @@ export default function AssetsPage() {
                     </Button>
                 </div>
 
-                <AssetList refresh={refresh} />
+                <AssetList refresh={refresh} onEdit={handleEdit} />
 
                 <AssetForm
                     isOpen={isFormOpen}
-                    onClose={() => setIsFormOpen(false)}
+                    onClose={handleClose}
                     onSuccess={handleSuccess}
+                    editingAsset={editingAsset}
                 />
             </div>
         </AppLayout>

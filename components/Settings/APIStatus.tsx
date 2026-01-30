@@ -68,6 +68,7 @@ export function APIStatus() {
 
     const assetTypes: AssetType[] = [
         'gold_gram',
+        'gold_14karat',
         'gold_quarter',
         'gold_half',
         'gold_full',

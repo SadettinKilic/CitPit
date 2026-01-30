@@ -4,13 +4,14 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { Input, Select, TextArea } from '../ui/Input';
 import { Button } from '../ui/Button';
-import { db } from '@/lib/db';
+import { db, Transaction } from '@/lib/db';
 import { getCurrentUserId } from '@/lib/auth';
 
 interface TransactionFormProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    editingTransaction?: Transaction | null;
 }
 
 const CATEGORIES = {
@@ -18,13 +19,35 @@ const CATEGORIES = {
     expense: ['Market', 'Fatura', 'Kira', 'Ulaşım', 'Eğlence', 'Sağlık', 'Giyim', 'Diğer'],
 };
 
-export function TransactionForm({ isOpen, onClose, onSuccess }: TransactionFormProps) {
-    const [type, setType] = useState<'income' | 'expense'>('expense');
-    const [category, setCategory] = useState('');
-    const [amount, setAmount] = useState('');
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    const [note, setNote] = useState('');
+export function TransactionForm({ isOpen, onClose, onSuccess, editingTransaction }: TransactionFormProps) {
+    const [type, setType] = useState<'income' | 'expense'>(editingTransaction?.type || 'expense');
+    const [category, setCategory] = useState(editingTransaction?.category || '');
+    const [amount, setAmount] = useState(editingTransaction?.amount.toString() || '');
+    const [date, setDate] = useState(
+        editingTransaction?.date
+            ? new Date(editingTransaction.date).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0]
+    );
+    const [note, setNote] = useState(editingTransaction?.note || '');
     const [loading, setLoading] = useState(false);
+
+    // Update form when editingTransaction changes
+    React.useEffect(() => {
+        if (editingTransaction) {
+            setType(editingTransaction.type);
+            setCategory(editingTransaction.category);
+            setAmount(editingTransaction.amount.toString());
+            setDate(new Date(editingTransaction.date).toISOString().split('T')[0]);
+            setNote(editingTransaction.note || '');
+        } else {
+            // Reset to defaults when not editing
+            setType('expense');
+            setCategory('');
+            setAmount('');
+            setDate(new Date().toISOString().split('T')[0]);
+            setNote('');
+        }
+    }, [editingTransaction]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,14 +61,26 @@ export function TransactionForm({ isOpen, onClose, onSuccess }: TransactionFormP
         }
 
         try {
-            await db.transactions.add({
-                type,
-                category: category || CATEGORIES[type][0],
-                amount: parseFloat(amount),
-                date: new Date(date),
-                note: note || undefined,
-                userId,
-            });
+            if (editingTransaction && editingTransaction.id) {
+                // Update existing transaction
+                await db.transactions.update(editingTransaction.id, {
+                    type,
+                    category: category || CATEGORIES[type][0],
+                    amount: parseFloat(amount),
+                    date: new Date(date),
+                    note: note || undefined,
+                });
+            } else {
+                // Add new transaction
+                await db.transactions.add({
+                    type,
+                    category: category || CATEGORIES[type][0],
+                    amount: parseFloat(amount),
+                    date: new Date(date),
+                    note: note || undefined,
+                    userId,
+                });
+            }
 
             // Reset form
             setType('expense');
@@ -58,7 +93,7 @@ export function TransactionForm({ isOpen, onClose, onSuccess }: TransactionFormP
             onClose();
         } catch (error) {
             console.error('Transaction error:', error);
-            alert('İşlem eklenirken hata oluştu');
+            alert(editingTransaction ? 'İşlem güncellenirken hata oluştu' : 'İşlem eklenirken hata oluştu');
         } finally {
             setLoading(false);
         }
@@ -67,7 +102,7 @@ export function TransactionForm({ isOpen, onClose, onSuccess }: TransactionFormP
     const categories = CATEGORIES[type];
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Yeni İşlem Ekle">
+        <Modal isOpen={isOpen} onClose={onClose} title={editingTransaction ? "İşlemi Düzenle" : "Yeni İşlem Ekle"}>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Select
                     label="İşlem Tipi"
@@ -119,7 +154,7 @@ export function TransactionForm({ isOpen, onClose, onSuccess }: TransactionFormP
                         İptal
                     </Button>
                     <Button type="submit" disabled={loading} className="flex-1">
-                        {loading ? 'Ekleniyor...' : 'Ekle'}
+                        {loading ? (editingTransaction ? 'Güncelleniyor...' : 'Ekleniyor...') : (editingTransaction ? 'Güncelle' : 'Ekle')}
                     </Button>
                 </div>
             </form>

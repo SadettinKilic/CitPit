@@ -76,19 +76,16 @@ export async function calculateMonthlyExpense(): Promise<number> {
     return transactions.reduce((sum, t) => sum + t.amount, 0);
 }
 
-// Kategori bazlı harcama dağılımı (Sadece aktif ay/yıl)
-export async function getCategoryExpenses(): Promise<{ category: string; amount: number }[]> {
+// Kategori bazlı harcama dağılımı
+export async function getCategoryExpenses(monthsBack: number = 0): Promise<{ category: string; amount: number }[]> {
     const transactions = await getUserTransactions();
 
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+    const startDate = new Date(now.getFullYear(), now.getMonth() - monthsBack, 1);
 
     const expenses = transactions.filter(t => {
         const date = new Date(t.date);
-        return t.type === 'expense' &&
-            date.getMonth() === currentMonth &&
-            date.getFullYear() === currentYear;
+        return t.type === 'expense' && date >= startDate;
     });
 
     const categoryMap = new Map<string, number>();

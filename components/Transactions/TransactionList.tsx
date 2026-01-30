@@ -3,13 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '../ui/Card';
 import { db, Transaction } from '@/lib/db';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit } from 'lucide-react';
 
 interface TransactionListProps {
     refresh: number;
+    onEdit?: (transaction: Transaction) => void;
 }
 
-export function TransactionList({ refresh }: TransactionListProps) {
+export function TransactionList({ refresh, onEdit }: TransactionListProps) {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [expandedTxId, setExpandedTxId] = useState<number | null>(null);
 
@@ -65,7 +66,7 @@ export function TransactionList({ refresh }: TransactionListProps) {
                                 <th className="px-6 py-4 text-left text-xs font-mono text-[#94A3B8] uppercase tracking-wider">Kategori</th>
                                 <th className="px-6 py-4 text-left text-xs font-mono text-[#94A3B8] uppercase tracking-wider">Not</th>
                                 <th className="px-6 py-4 text-right text-xs font-mono text-[#94A3B8] uppercase tracking-wider">Tutar</th>
-                                <th className="px-6 py-4 text-center text-xs font-mono text-[#94A3B8] uppercase tracking-wider">İşlem</th>
+                                <th className="px-6 py-4 text-center text-xs font-mono text-[#94A3B8] uppercase tracking-wider">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/10 text-white">
@@ -86,12 +87,20 @@ export function TransactionList({ refresh }: TransactionListProps) {
                                         {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <button
-                                            onClick={() => transaction.id && handleDelete(transaction.id)}
-                                            className="text-red-400/60 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <button
+                                                onClick={() => onEdit && transaction.id && onEdit(transactions.find(t => t.id === transaction.id)!)}
+                                                className="text-blue-400/60 hover:text-blue-400 transition-colors p-2 hover:bg-blue-500/10 rounded-lg"
+                                            >
+                                                <Edit size={16} />
+                                            </button>
+                                            <button
+                                                onClick={() => transaction.id && handleDelete(transaction.id)}
+                                                className="text-red-400/60 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -138,7 +147,16 @@ export function TransactionList({ refresh }: TransactionListProps) {
                                             {transaction.note || 'Not eklenmemiş'}
                                         </p>
                                     </div>
-                                    <div className="flex justify-end">
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onEdit && transaction.id && onEdit(transactions.find(t => t.id === transaction.id)!);
+                                            }}
+                                            className="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 bg-blue-500/10 px-4 py-2 rounded-lg transition-colors border border-blue-500/20"
+                                        >
+                                            <Edit size={14} /> Düzenle
+                                        </button>
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();

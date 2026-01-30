@@ -3,6 +3,7 @@
 
 export type AssetType =
     | 'gold_gram'      // Gram Altın
+    | 'gold_14karat'   // 14 Ayar Gram Altın
     | 'gold_quarter'   // Çeyrek Altın
     | 'gold_half'      // Yarım Altın
     | 'gold_full'      // Tam Altın
@@ -24,6 +25,7 @@ export interface PriceData {
 
 export interface AllPrices {
     gold_gram: PriceData;
+    gold_14karat: PriceData;
     gold_quarter: PriceData;
     gold_half: PriceData;
     gold_full: PriceData;
@@ -63,6 +65,13 @@ export async function fetchPrices(): Promise<AllPrices | null> {
                 selling: data.GRA?.Selling || 0,
                 change: data.GRA?.Change || 0,
                 name: 'Gram Altın',
+                updateDate: data.Update_Date || new Date().toISOString(),
+            },
+            gold_14karat: {
+                buying: data['14AYARALTIN']?.Buying || 0,
+                selling: data['14AYARALTIN']?.Selling || 0,
+                change: data['14AYARALTIN']?.Change || 0,
+                name: '14 Ayar Gram Altın',
                 updateDate: data.Update_Date || new Date().toISOString(),
             },
             gold_quarter: {
@@ -185,6 +194,7 @@ export function clearPriceCache() {
 export function getAssetTypeName(type: AssetType): string {
     const names: Record<AssetType, string> = {
         gold_gram: 'Gram Altın',
+        gold_14karat: '14 Ayar Gram Altın',
         gold_quarter: 'Çeyrek Altın',
         gold_half: 'Yarım Altın',
         gold_full: 'Tam Altın',
@@ -203,6 +213,7 @@ export function getAssetTypeName(type: AssetType): string {
 export function getAssetTypeOptions() {
     return [
         { value: 'gold_gram', label: 'Gram Altın' },
+        { value: 'gold_14karat', label: '14 Ayar Gram Altın' },
         { value: 'gold_quarter', label: 'Çeyrek Altın' },
         { value: 'gold_half', label: 'Yarım Altın' },
         { value: 'gold_full', label: 'Tam Altın' },

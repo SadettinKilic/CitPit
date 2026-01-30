@@ -5,15 +5,16 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { db } from '@/lib/db';
 import type { Asset } from '@/lib/db';
-import { Trash2, TrendingUp, TrendingDown } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, Edit } from 'lucide-react';
 import { getSellingPrice, getAssetTypeName } from '@/lib/api';
 import { getCurrentUserId } from '@/lib/auth';
 
 interface AssetListProps {
     refresh?: number;
+    onEdit?: (asset: Asset) => void;
 }
 
-export function AssetList({ refresh }: AssetListProps) {
+export function AssetList({ refresh, onEdit }: AssetListProps) {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [prices, setPrices] = useState<Map<string, number>>(new Map());
     const [loading, setLoading] = useState(true);
@@ -98,7 +99,7 @@ export function AssetList({ refresh }: AssetListProps) {
                                 <th className="px-6 py-4 text-right text-xs font-mono text-[#94A3B8] uppercase tracking-wider">Maliyet</th>
                                 <th className="px-6 py-4 text-right text-xs font-mono text-[#94A3B8] uppercase tracking-wider">Güncel</th>
                                 <th className="px-6 py-4 text-right text-xs font-mono text-[#94A3B8] uppercase tracking-wider">Kar/Zarar</th>
-                                <th className="px-6 py-4 text-right text-xs font-mono text-[#94A3B8] uppercase tracking-wider">İşlem</th>
+                                <th className="px-6 py-4 text-center text-xs font-mono text-[#94A3B8] uppercase tracking-wider">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/10 text-white">
@@ -136,10 +137,18 @@ export function AssetList({ refresh }: AssetListProps) {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button onClick={() => handleDelete(asset.id!)} className="p-2 hover:bg-red-500/20 text-red-400/60 hover:text-red-400 rounded-lg transition-all">
-                                                <Trash2 size={16} />
-                                            </button>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <button
+                                                    onClick={() => onEdit && asset.id && onEdit(assets.find(a => a.id === asset.id)!)}
+                                                    className="text-blue-400/60 hover:text-blue-400 transition-colors p-2 hover:bg-blue-500/10 rounded-lg"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button onClick={() => handleDelete(asset.id!)} className="p-2 hover:bg-red-500/20 text-red-400/60 hover:text-red-400 rounded-lg transition-all">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 );
@@ -204,7 +213,16 @@ export function AssetList({ refresh }: AssetListProps) {
                                             <p className="text-[10px] text-[#94A3B8] uppercase font-mono">Alış Tarihi</p>
                                             <p className="text-white font-mono text-xs">{new Date(asset.date).toLocaleDateString('tr-TR')}</p>
                                         </div>
-                                        <div className="flex items-end justify-end">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onEdit && asset.id && onEdit(assets.find(a => a.id === asset.id)!);
+                                                }}
+                                                className="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 bg-blue-500/10 px-3 py-1.5 rounded-lg transition-colors border border-blue-500/20"
+                                            >
+                                                <Edit size={14} /> Düzenle
+                                            </button>
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
