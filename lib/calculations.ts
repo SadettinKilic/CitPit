@@ -222,6 +222,7 @@ export async function getAllAssetStats(): Promise<{
 }> {
     const assetTypes: AssetType[] = [
         'gold_gram',
+        'gold_14karat',
         'gold_quarter',
         'gold_half',
         'gold_full',
@@ -229,6 +230,9 @@ export async function getAllAssetStats(): Promise<{
         'silver_gram',
         'usd',
         'eur',
+        'home',
+        'car',
+        'land',
     ];
 
     const stats: any = {};

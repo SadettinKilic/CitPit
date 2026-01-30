@@ -33,15 +33,20 @@ export function AssetOverview() {
         return <Card><p className="text-center py-8 text-[#94A3B8]">Yükleniyor...</p></Card>;
     }
 
-    // Filter out assets with no data
+    // Include ALL asset types in portfolio
     const assetTypes: AssetType[] = [
         'gold_gram',
+        'gold_14karat',  // Added 14 Ayar Altın
         'gold_quarter',
         'gold_half',
         'gold_full',
         'gold_resat',
+        'silver_gram',   // Added Gümüş
         'usd',
         'eur',
+        'home',          // Added Ev
+        'car',           // Added Araba
+        'land',          // Added Arsa
     ];
 
     const activeAssets = assetTypes.filter(type => stats[type]?.totalQuantity > 0);
@@ -63,48 +68,48 @@ export function AssetOverview() {
                 const isProfit = data.profit >= 0;
 
                 return (
-                    <Card key={assetType} variant="glass" className="relative overflow-hidden">
-                        {/* Background watermark */}
-                        <div className="absolute top-0 right-0 opacity-5 text-[120px] font-bold pointer-events-none">
+                    <Card key={assetType} variant="glass" className="relative overflow-hidden hover:border-[#F7931A]/30 transition-all duration-300">
+                        {/* Background watermark - smaller on mobile */}
+                        <div className="absolute top-0 right-0 opacity-[0.03] text-[80px] md:text-[120px] font-bold pointer-events-none">
                             {isProfit ? '📈' : '📉'}
                         </div>
 
-                        <div className="relative z-10 space-y-4">
+                        <div className="relative z-10 space-y-3 md:space-y-4">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <p className="text-sm text-[#94A3B8] font-body mb-1">
+                                    <p className="text-xs md:text-sm text-[#94A3B8] font-body mb-1">
                                         {getAssetTypeName(assetType)}
                                     </p>
-                                    <p className="text-3xl font-mono font-bold text-white">
+                                    <p className="text-2xl md:text-3xl font-mono font-bold text-white">
                                         {data.totalQuantity.toFixed(2)}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="space-y-2 pt-4 border-t border-white/10">
-                                <div className="flex justify-between text-sm">
+                            <div className="space-y-2 pt-3 md:pt-4 border-t border-white/10">
+                                <div className="flex justify-between text-xs md:text-sm">
                                     <span className="text-[#94A3B8] font-body">Maliyet:</span>
                                     <span className="font-mono text-white">{formatCurrency(data.totalCost)}</span>
                                 </div>
-                                <div className="flex justify-between text-sm">
+                                <div className="flex justify-between text-xs md:text-sm">
                                     <span className="text-[#94A3B8] font-body">Güncel Değer:</span>
                                     <span className="font-mono text-[#F7931A] font-semibold">
                                         {formatCurrency(data.currentValue)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center pt-2 border-t border-white/10">
-                                    <span className="text-[#94A3B8] font-body text-sm">Kar/Zarar:</span>
+                                    <span className="text-[#94A3B8] font-body text-xs md:text-sm">Kar/Zarar:</span>
                                     <div className="flex items-center gap-2">
                                         {isProfit ? (
-                                            <TrendingUp size={16} className="text-green-400" />
+                                            <TrendingUp size={14} className="text-green-400 md:w-4 md:h-4" />
                                         ) : (
-                                            <TrendingDown size={16} className="text-red-400" />
+                                            <TrendingDown size={14} className="text-red-400 md:w-4 md:h-4" />
                                         )}
                                         <div className="text-right">
-                                            <p className={`font-mono font-bold ${isProfit ? 'text-green-400' : 'text-red-400'}`}>
+                                            <p className={`font-mono font-bold text-sm md:text-base ${isProfit ? 'text-green-400' : 'text-red-400'}`}>
                                                 {isProfit ? '+' : ''}{formatCurrency(data.profit)}
                                             </p>
-                                            <p className={`text-xs font-mono ${isProfit ? 'text-green-400/70' : 'text-red-400/70'}`}>
+                                            <p className={`text-[10px] md:text-xs font-mono ${isProfit ? 'text-green-400/70' : 'text-red-400/70'}`}>
                                                 {data.profitPercentage.toFixed(2)}%
                                             </p>
                                         </div>

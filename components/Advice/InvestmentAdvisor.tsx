@@ -82,39 +82,41 @@ export function InvestmentAdvisor({ balance }: InvestmentAdvisorProps) {
 
     return (
         <>
-            {/* Trigger Card */}
-            <div onClick={handleOpen} className="w-full cursor-pointer group relative">
-                {/* Background Glow */}
-                <div className="absolute inset-0 bg-indigo-500/10 rounded-xl blur-2xl group-hover:bg-indigo-500/20 transition-all duration-500" />
+            {/* Trigger Card - Glass on Hover */}
+            <div onClick={handleOpen} className="w-full cursor-pointer relative group">
+                {/* Background Glow - Pointer events none to prevent click blocking */}
+                <div className="absolute inset-0 bg-indigo-500/0 rounded-xl blur-xl group-hover:bg-indigo-500/20 transition-all duration-500 pointer-events-none" />
 
-                <Card className="relative bg-white/[0.03] backdrop-blur-md border-white/10 hover:border-indigo-500/40 transition-all duration-500 overflow-hidden shadow-2xl active:scale-95 group">
-                    {/* Animated background glow */}
-                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl opacity-50" />
+                <Card className="relative bg-white/[0.02] border-white/[0.05] hover:bg-white/10 hover:backdrop-blur-lg hover:border-white/20 hover:shadow-lg transition-all duration-300 overflow-hidden active:scale-[0.98]">
+                    {/* Sliding Shine Effect */}
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 ease-in-out pointer-events-none z-0" />
 
-                    <div className="relative z-10 flex items-center gap-4 p-4 md:p-5">
-                        <div className="p-3 rounded-2xl bg-gradient-to-tr from-indigo-600/20 to-purple-600/20 text-indigo-400 group-hover:scale-110 group-hover:from-indigo-600/30 group-hover:to-purple-600/30 transition-all duration-500 shadow-xl shadow-indigo-500/10 border border-white/5 group-hover:border-indigo-500/30">
-                            <Sparkles size={26} className="group-hover:animate-pulse-slow" />
+                    {/* Inner sheen effect - Visible on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-transparent to-transparent group-hover:from-white/5 pointer-events-none transition-all duration-500 z-0" />
+
+                    <div className="relative z-10 flex items-center px-4 py-4">
+                        {/* Icon */}
+                        <div className="shrink-0 mr-4 p-2.5 rounded-xl bg-gradient-to-tr from-indigo-600/20 to-purple-600/20 text-indigo-400 group-hover:text-white group-hover:from-indigo-600/30 group-hover:to-purple-600/30 group-hover:scale-110 transition-all duration-300 border border-white/5 group-hover:border-white/10">
+                            <Sparkles size={20} className="md:w-5 md:h-5" />
                         </div>
-                        <div className="flex-1 min-w-0 text-left">
-                            <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-heading font-bold text-base md:text-lg text-white group-hover:text-indigo-200 transition-colors leading-tight tracking-tight">
-                                    AI Danışman
-                                </h3>
-                                <div className="flex gap-1.5 opacity-80">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                                </div>
-                            </div>
-                            <p className="text-[10px] md:text-xs text-indigo-400/70 group-hover:text-indigo-300 transition-colors leading-tight font-mono uppercase tracking-[0.15em] font-medium">
-                                Akıllı Portföy Analizi
+
+                        {/* Text */}
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                            <h3 className="font-heading font-bold text-base text-gray-300 group-hover:text-white transition-colors leading-tight">
+                                AI Danışman
+                            </h3>
+                            <p className="text-xs text-gray-500 group-hover:text-indigo-200 transition-colors leading-tight font-medium mt-0.5">
+                                Portföy Analizi
                             </p>
                         </div>
-                    </div>
 
-                    {/* Subtle Shine Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        {/* Pulse indicator - Positioned to the right, avoiding overlap */}
+                        <div className="hidden md:flex gap-1 ml-2 self-start mt-1 opacity-0 group-hover:opacity-80 transition-opacity duration-300 shrink-0">
+                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                    </div>
                 </Card>
             </div>
 

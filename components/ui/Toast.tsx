@@ -42,9 +42,9 @@ export function Toast({
     };
 
     return (
-        <div className={`fixed bottom-8 right-8 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-lg animate-in slide-in-from-bottom-5 fade-in duration-300 ${bgColors[type]}`}>
+        <div className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 left-4 md:left-auto z-[9999] flex items-center gap-3 px-4 py-3 md:py-3.5 rounded-xl border backdrop-blur-md shadow-2xl animate-in slide-in-from-bottom-5 fade-in duration-300 ${bgColors[type]}`}>
             {icons[type]}
-            <span className="text-sm font-medium pr-1">{message}</span>
+            <span className="text-sm md:text-base font-medium pr-1">{message}</span>
         </div>
     );
 }
