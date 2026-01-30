@@ -85,11 +85,11 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-heading font-bold mb-2">
-              <span className="text-white">Hoş Geldiniz,</span>{' '}
               <span className="text-[#F7931A]">ÇıtPıt</span>
+              <span className="text-white">'a Hoş Geldiniz</span>{' '}
             </h1>
             <p className="text-[#94A3B8] font-body text-sm md:text-base">
-              Kişisel finans ve varlıklarınızın özeti
+              Kişisel Finans Yönetim Platformu
             </p>
           </div>
 

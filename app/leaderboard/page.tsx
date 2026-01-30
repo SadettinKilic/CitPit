@@ -75,7 +75,7 @@ export default function LeaderboardPage() {
                             Leaderboard
                         </h1>
                         <p className="text-[#94A3B8] font-body">
-                            En Başarılı FinFlow Yatırımcıları
+                            En Başarılı ÇıtPıt Yatırımcıları
                         </p>
                     </div>
                     <Button

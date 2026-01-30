@@ -13,7 +13,7 @@ export default function SettingsPage() {
                         Ayarlar
                     </h1>
                     <p className="text-[#94A3B8] font-body">
-                        API durumu ve veri yönetimi
+                        Hedefiniz, Canlı Piyasa Verileri ve Veri Yönetimi
                     </p>
                 </div>
 

@@ -36,7 +36,7 @@ export default function AssetsPage() {
                             Varlıklar
                         </h1>
                         <p className="text-[#94A3B8] font-body">
-                            Altın ve gümüş varlıklarınızı takip edin
+                            Varlıklarınızı takip edin
                         </p>
                     </div>
 
