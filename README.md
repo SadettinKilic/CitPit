@@ -1,13 +1,13 @@
-# 🌊# ÇıtPıt - Kişisel Finans Yönetimi
+# 🌊 ÇıtPıt - Kişisel Finans Yönetimi
 
 **ÇıtPıt**, harcamalarınızı, gelirlerinizi ve varlıklarınızı (Altın, Gümüş, Döviz vb.) kolayca takip etmenizi sağlayan modern bir web uygulamasıdır. Canlı piyasa verileriyle varlıklarınızın güncel değerini anlık olarak hesaplar.
 
-🔗 **Canlı Demo:** [https://citpit.vercel.app](https://citpit.vercel.app)
+🔗 **Canlı Demo:** [ÇıtPıt App](https://citpit.vercel.app)
 
 ## ✨ Özellikler
 
 ### 🤖 Kişiselleştirilmiş Yapay Zeka Asistanı
-FinFlow, portföyünüzü yönetirken Google Gemini AI teknolojisinden faydalanır:
+ÇıtPıt, portföyünüzü yönetirken Google Gemini AI teknolojisinden faydalanır:
 - **Kişisel Karşılama:** Size isminizle hitap eder, güncel bakiye ve hedefinize (örn: Araba, Ev) göre analize başlar.
 - **Veri Odaklı Tavsiyeler:** Canlı piyasa verilerini analiz ederek matematiksel ve somut yatırım sepeti önerileri sunar.
 - **Otomatik Değerleme:** Aracınızın modeline/km'sine veya evinizin metrekaresine göre AI destekli anlık fiyat tahmini yapar.
@@ -23,10 +23,10 @@ FinFlow, portföyünüzü yönetirken Google Gemini AI teknolojisinden faydalan�
 - **Anlık Güncelleme:** Veriler Redis (Vercel KV) üzerinde tutulur.
 
 ### 🪙 Geniş Varlık Desteği
-FinFlow, **11 farklı varlık tipi** ile tüm yatırımlarınızı tek yerden yönetmenizi sağlar:
+ÇıtPıt, **Birçok farklı varlık tipi** ile tüm yatırımlarınızı tek yerden yönetmenizi sağlar:
 
 **Döviz & Emtia (Canlı Borsa Verisi):**
-- **Gram Altın, Çeyrek, Yarım, Tam, Reşat Altın**
+- **Gram, Çeyrek, Yarım, Tam, Reşat Altın**
 - **Gümüş (Gram)**
 - **Dolar (USD), Euro (EUR)**
 *(Fiyatlar canlı API üzerinden anlık güncellenir - finans.truncgil.com)*
@@ -74,4 +74,3 @@ npm run dev
 
 ---
 **Made with ❤️ using Next.js & Bitcoin DeFi Aesthetic**
-
